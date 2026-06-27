@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Game Recommender System</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="background-effects">
+        <div class="glow-orb orb-1"></div>
+        <div class="glow-orb orb-2"></div>
+    </div>
+
+    <main class="container">
+        <section class="hero">
+            <h1>Discover Your Next <span class="highlight">Favorite Game</span></h1>
+            
+            <div class="search-container">
+                <input type="text" id="searchInput" placeholder="Enter Game Name or Steam ID (e.g., Among Us or 730)" autocomplete="off">
+                <button id="searchBtn">Search</button>
+            </div>
+        </section>
+
+        <section id="loadingState" class="hidden">
+            <div class="loader">
+                <div class="pulse"></div>
+            </div>
+            <p>Scanning the gaming multiverse...</p>
+        </section>
+
+        <section id="errorState" class="hidden">
+            <div class="error-card">
+                <h2>Game not found</h2>
+                <p>We couldn't find any recommendations for that game. Try another title or Steam ID.</p>
+            </div>
+        </section>
+
+        <section id="resultsSection" class="hidden">
+            <div id="targetGameContainer" class="target-game-card glass-panel">
+                <!-- Injected via JS -->
+            </div>
+
+            <h3 class="recommendations-title">Top Recommendations</h3>
+            <div id="recommendationsGrid" class="recommendations-grid">
+                <!-- Injected via JS -->
+            </div>
+        </section>
+    </main>
+
+    <script src="app.js"></script>
+</body>
+</html>
