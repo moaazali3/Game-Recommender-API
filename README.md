@@ -2,6 +2,8 @@
 
 A powerful, intelligent Game Recommendation System that suggests games based on Steam reviews and shared keyword matching. It features a full-stack architecture with an ASP.NET Core backend API and a beautiful, modern vanilla JavaScript frontend.
 
+🌐 **Live Demo:** [http://game-recommender.runasp.net/](http://game-recommender.runasp.net/)
+
 ## 🚀 Features
 
 - **Smart Recommendations:** Uses keyword intersection algorithms to suggest the most related games by analyzing Steam reviews.
