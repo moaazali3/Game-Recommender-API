@@ -112,6 +112,7 @@ h1 {
     gap: 1rem;
     width: 100%;
     position: relative;
+    z-index: 10;
     padding: 0.5rem;
     background: rgba(255, 255, 255, 0.05);
     border: 1px solid var(--card-border);
@@ -393,19 +394,40 @@ button:active {
     position: absolute;
     top: 10px;
     right: 10px;
-    background: rgba(10, 10, 12, 0.8);
+    background: rgba(10, 10, 12, 0.9);
     backdrop-filter: blur(5px);
     border: 1px solid var(--accent);
     color: white;
     font-weight: 800;
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
+    padding: 0.4rem 0.8rem;
+    border-radius: 20px;
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
-    font-size: 1.1rem;
     box-shadow: 0 0 15px rgba(138, 43, 226, 0.5);
+}
+
+.match-score-label {
+    font-size: 0.6rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: rgba(255, 255, 255, 0.8);
+    margin-bottom: 2px;
+}
+
+.match-score-value {
+    font-size: 1.1rem;
+}
+
+.about-btn {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    padding: 0.6rem 1.5rem;
+    font-size: 0.9rem;
+    z-index: 50;
+    border-radius: 30px;
 }
 
 .card-content {
@@ -439,9 +461,333 @@ button:active {
     border: 1px solid rgba(138, 43, 226, 0.3);
 }
 
-@media (max-width: 600px) {
-    h1 { font-size: 2.5rem; }
-    .search-container { flex-direction: column; border-radius: 20px; background: transparent; border: none; box-shadow: none; padding: 0; }
-    input { border-radius: 20px; background: rgba(255, 255, 255, 0.05); border: 1px solid var(--card-border); margin-bottom: 1rem; }
-    button { padding: 1rem; }
+
+
+/* Modal Styles */
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(10, 10, 12, 0.8);
+    backdrop-filter: blur(8px);
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+}
+
+.modal.show {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.modal-content {
+    background: rgba(20, 20, 25, 0.95);
+    border: 1px solid rgba(138, 43, 226, 0.5);
+    border-radius: 20px;
+    padding: 2.5rem;
+    width: 90%;
+    max-width: 500px;
+    position: relative;
+    transform: translateY(-50px) scale(0.9);
+    transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    box-shadow: 0 20px 50px rgba(0,0,0,0.5), 0 0 40px rgba(138, 43, 226, 0.2);
+    text-align: center;
+}
+
+.modal.show .modal-content {
+    transform: translateY(0) scale(1);
+}
+
+.close-btn {
+    position: absolute;
+    top: 15px;
+    right: 20px;
+    font-size: 2rem;
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: color 0.2s;
+    line-height: 1;
+}
+
+.close-btn:hover {
+    color: white;
+}
+
+.modal-content h2 {
+    font-size: 1.8rem;
+    margin-bottom: 1rem;
+    color: white;
+}
+
+.modal-content p {
+    color: var(--text-muted);
+    line-height: 1.6;
+    margin-bottom: 1.5rem;
+}
+
+.developer-info {
+    margin-top: 1.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid rgba(255,255,255,0.1);
+    text-align: center;
+}
+
+.developer-info p {
+    color: white;
+    margin-bottom: 1.2rem;
+}
+
+.social-links {
+    display: flex;
+    justify-content: center;
+    gap: 1.5rem;
+}
+
+.social-links a {
+    color: var(--text-muted);
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.social-links a svg {
+    width: 20px;
+    height: 20px;
+    fill: currentColor;
+}
+
+.social-links a:hover {
+    color: white;
+    transform: translateY(-3px);
+    background: var(--accent);
+    border-color: var(--accent);
+    box-shadow: 0 5px 15px rgba(138, 43, 226, 0.4);
+}
+
+/* Card Actions */
+.card-actions {
+    display: flex;
+    gap: 0.8rem;
+    margin-top: auto;
+    padding-top: 1rem;
+}
+
+.action-btn {
+    flex: 1;
+    text-align: center;
+    padding: 0.6rem 0.5rem;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-decoration: none;
+    border: none;
+    font-family: inherit;
+}
+
+.steam-btn {
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+}
+
+.steam-btn:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.similar-btn {
+    background: var(--accent);
+    color: white;
+}
+
+.similar-btn:hover {
+    background: var(--accent-hover);
+}
+
+/* Tags */
+.tags-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin-bottom: 1rem;
+}
+
+.tag-badge {
+    background: rgba(0, 212, 255, 0.1);
+    color: #00d4ff;
+    border: 1px solid rgba(0, 212, 255, 0.3);
+    padding: 0.2rem 0.6rem;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+/* Skeletons */
+.skeleton-card {
+    height: 320px;
+    background: linear-gradient(90deg, rgba(255,255,255,0.03) 25%, rgba(255,255,255,0.08) 50%, rgba(255,255,255,0.03) 75%);
+    background-size: 200% 100%;
+    animation: loading 1.5s infinite;
+    border-radius: 16px;
+    pointer-events: none;
+    border: 1px solid var(--card-border);
+}
+
+.skeleton-target {
+    height: 300px;
+    width: 100%;
+    background: linear-gradient(90deg, rgba(255,255,255,0.03) 25%, rgba(255,255,255,0.08) 50%, rgba(255,255,255,0.03) 75%);
+    background-size: 200% 100%;
+    animation: loading 1.5s infinite;
+    border-radius: 20px;
+    margin-bottom: 4rem;
+    border: 1px solid var(--card-border);
+}
+
+@keyframes loading {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+}
+
+/* Mature Game Styles */
+.mature-card {
+    border: 1px solid rgba(255, 69, 0, 0.4) !important;
+    box-shadow: 0 0 15px rgba(255, 69, 0, 0.15) !important;
+}
+
+.mature-card:hover {
+    border-color: rgba(255, 69, 0, 0.8) !important;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.4), 0 0 25px rgba(255, 69, 0, 0.3) !important;
+}
+
+.mature-badge {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    background: rgba(255, 0, 0, 0.2);
+    color: #ff4d4d;
+    font-size: 10px;
+    font-weight: 800;
+    padding: 0.3rem 0.6rem;
+    border-radius: 12px;
+    backdrop-filter: blur(5px);
+    border: 1px solid rgba(255, 0, 0, 0.3);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    z-index: 10;
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 768px) {
+    /* General Spacing */
+    .container {
+        padding: 1rem;
+    }
+
+    .hero {
+        margin-top: 4vh;
+        margin-bottom: 2rem;
+    }
+
+    h1 {
+        font-size: 2.5rem;
+    }
+
+    /* Search Bar & Autocomplete */
+    .search-container {
+        width: 100%;
+        flex-direction: column;
+        border-radius: 20px;
+        background: transparent;
+        border: none;
+        box-shadow: none;
+        padding: 0;
+    }
+
+    .search-container input {
+        width: 100%;
+        border-radius: 20px;
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid var(--card-border);
+        margin-bottom: 0.5rem;
+        font-size: 1rem;
+        padding: 0.8rem 1.2rem;
+    }
+
+    .search-container button {
+        width: 100%;
+        padding: 1rem;
+        font-size: 1rem;
+    }
+
+    .autocomplete-dropdown {
+        width: 100%;
+        top: auto;
+        font-size: 0.95rem;
+    }
+
+    /* Recommendations Grid */
+    .recommendations-grid {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+
+    /* Target Game Card */
+    .target-game-card {
+        margin-bottom: 2rem;
+        flex-direction: column;
+        height: auto;
+    }
+
+    .target-image {
+        height: 180px;
+        width: 100%;
+    }
+
+    .target-info {
+        padding: 1.5rem;
+    }
+
+    .target-title {
+        font-size: 1.8rem;
+    }
+
+    /* Modal */
+    .modal-content {
+        width: 90%;
+        padding: 1.5rem;
+    }
+
+    .modal-content h2 {
+        font-size: 1.5rem;
+    }
+
+    .modal-content p {
+        font-size: 0.95rem;
+    }
+
+    .social-links {
+        gap: 1rem;
+    }
+
+    /* About button */
+    .about-btn {
+        top: 10px;
+        right: 10px;
+        padding: 0.5rem 1rem;
+        font-size: 0.8rem;
+    }
 }

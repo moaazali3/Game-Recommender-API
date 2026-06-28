@@ -2,6 +2,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const searchInput = document.getElementById('searchInput');
     const searchBtn = document.getElementById('searchBtn');
     const autocompleteDropdown = document.getElementById('autocompleteDropdown');
+    const aboutBtn = document.getElementById('aboutBtn');
+    const infoModal = document.getElementById('infoModal');
+    const closeModalBtn = document.getElementById('closeModalBtn');
     
     const loadingState = document.getElementById('loadingState');
     const errorState = document.getElementById('errorState');
@@ -14,6 +17,23 @@ document.addEventListener('DOMContentLoaded', () => {
     const getSteamImage = (appId) => {
         return `https://cdn.akamai.steamstatic.com/steam/apps/${appId}/header.jpg`;
     };
+
+    if (aboutBtn && infoModal && closeModalBtn) {
+        aboutBtn.addEventListener('click', () => {
+            infoModal.classList.add('show');
+        });
+
+        closeModalBtn.addEventListener('click', () => {
+            infoModal.classList.remove('show');
+        });
+
+        // Close on outside click
+        infoModal.addEventListener('click', (e) => {
+            if (e.target === infoModal) {
+                infoModal.classList.remove('show');
+            }
+        });
+    }
 
     const hideAllSections = () => {
         loadingState.classList.add('hidden');
@@ -28,7 +48,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const showLoading = () => {
         hideAllSections();
-        loadingState.classList.remove('hidden');
+        resultsSection.classList.remove('hidden');
+        targetGameContainer.innerHTML = `<div class="skeleton-target"></div>`;
+        recommendationsGrid.innerHTML = Array(8).fill(`<div class="skeleton-card"></div>`).join('');
     };
 
     const renderResults = (data, searchInputVal) => {
@@ -67,24 +89,61 @@ document.addEventListener('DOMContentLoaded', () => {
         // Handle Recommendations
         const recList = data.recommendations || data.recommend || data.Recommend || data.Recommendations || [];
         if (recList.length > 0) {
-            recList.slice(0, 5).forEach(game => {
+            recList.forEach(game => {
                 const id = game.appid || game.appId || game.AppId || game.TargetAppId;
                 const score = game.matchscore || game.matchScore || game.MatchScore;
                 const keywords = game.sharedkeywords || game.sharedKeywords || game.SharedKeywords || game.Sharedkeywords || [];
                 const name = game.name || game.Name;
 
+                const tags = game.tags || game.Tags || [];
+                let tagsArray = [];
+                if (typeof tags === 'string') {
+                    tagsArray = tags.split(',').map(t => t.trim()).filter(t => t);
+                } else if (Array.isArray(tags)) {
+                    tagsArray = tags;
+                }
+
+                let tagsHtml = '';
+                if (tagsArray.length > 0) {
+                    tagsHtml = `<div class="tags-container">
+                        ${tagsArray.slice(0, 4).map(t => `<span class="tag-badge">${t}</span>`).join('')}
+                    </div>`;
+                }
+
+                const isMature = game.isMature || game.IsMature;
+
                 const card = document.createElement('div');
-                card.className = 'game-card';
+                card.className = isMature ? 'game-card mature-card' : 'game-card';
                 
+                const matureBadgeHtml = isMature ? `<span class="mature-badge">18+ Mature</span>` : '';
+
                 card.innerHTML = `
                     <div class="card-image-container">
                         <img src="${getSteamImage(id)}" alt="${name}" class="card-image" onerror="this.src='https://via.placeholder.com/460x215/1a1a1c/ffffff?text=No+Cover';">
-                        <div class="match-score-badge">${score}</div>
+                        ${matureBadgeHtml}
+                        <div class="match-score-badge">
+                            <span class="match-score-label">Match</span>
+                            <span class="match-score-value">${score}</span>
+                        </div>
                     </div>
                     <div class="card-content">
                         <h3 class="card-title">${name}</h3>
+                        ${tagsHtml}
+                        <div class="card-actions">
+                            <a href="https://store.steampowered.com/app/${id}" target="_blank" class="action-btn steam-btn" onclick="event.stopPropagation()">View on Steam</a>
+                            <button class="action-btn similar-btn" data-name="${name}">Find Similar</button>
+                        </div>
                     </div>
                 `;
+
+                const similarBtn = card.querySelector('.similar-btn');
+                if (similarBtn) {
+                    similarBtn.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        searchInput.value = name;
+                        performSearch();
+                    });
+                }
                 
                 recommendationsGrid.appendChild(card);
             });

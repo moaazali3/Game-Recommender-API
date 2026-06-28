@@ -87,10 +87,22 @@ namespace Game_Recommender_API.Controllers
             {
                 return Ok(new List<object>());
             }
-            var suggestion = await _dbContext.Games.
-                Where(g => g.Name.ToLower().Contains(q.ToLower())).
-                Select(g => new { appid = g.Appid, name = g.Name }).Take(5).ToListAsync();
-            return Ok(suggestion);
+
+            var nsfwTags = new List<string> { "nsfw", "sexual content", "hentai"};
+
+            
+            var allMatches = await _dbContext.Games
+                .Where(g => g.Name.ToLower().Contains(q.ToLower()))
+                .ToListAsync();
+
+            
+            var suggestions = allMatches
+                .Where(g => string.IsNullOrEmpty(g.Tags) || !nsfwTags.Any(badTag => g.Tags.ToLower().Contains(badTag)))
+                .Select(g => new { appid = g.Appid, name = g.Name })
+                .Take(5)
+                .ToList();
+
+            return Ok(suggestions);
         }
         [HttpGet("all")]
         public async Task<IActionResult> GetAllGames()
@@ -113,23 +125,58 @@ namespace Game_Recommender_API.Controllers
       g.Appid == appid || g.Name.ToLower().Contains(appid.ToLower()));
             if (targetgame == null)
                return NotFound(new { message = "مش موجوده" });
-            var targetkeywords = targetgame.keywords.Split(',');
-            var allother = await _dbContext.Games.Where(g => g.Appid != appid).ToListAsync();
-            var recommend = allother.Select(
-                game => new
+            var targetKeywords = targetgame.keywords != null ? targetgame.keywords.Split(',') : new string[0];
+            var targetTags = targetgame.Tags != null ? targetgame.Tags.Split(',') : new string[0];
+            var matureTags = new List<string> { "nudity", "sexual content" };
+            var allother = await _dbContext.Games.Where(g => g.Appid != targetgame.Appid).ToListAsync();
+
+            // تطبيق الفلتر الذكي
+            allother = allother.Where(g =>
+            {
+                
+                if (string.IsNullOrEmpty(g.Tags)) return true;
+                var gameTagsList = g.Tags.ToLower().Split(',').Select(t => t.Trim()).ToList();
+                var hardBannedTags = new List<string> { "hentai", "nsfw", "adult only" };
+                var matureTags = new List<string> { "nudity", "sexual content" };
+                var mainstreamTags = new List<string> { "rpg", "action", "adventure", "shooter", "open world", "strategy", "sports", "story rich", "simulation" };
+                if (gameTagsList.Any(tag => hardBannedTags.Contains(tag)))
+                    return false;
+                bool hasMatureContent = gameTagsList.Any(tag => matureTags.Contains(tag));
+                if (hasMatureContent)
+                {
+                    bool hasMainstreamContent = gameTagsList.Any(tag => mainstreamTags.Contains(tag));
+                    if (!hasMainstreamContent)
+                        return false;
+                }
+                return true;
+
+            }).ToList();
+
+            var recommend = allother.Select(game =>
+            {
+                var gameKeywords = game.keywords != null ? game.keywords.Split(',') : new string[0];
+                var gameTags = game.Tags != null ? game.Tags.Split(',') : new string[0];
+                bool isMatureContent = gameTags.Any(tag => matureTags.Contains(tag.ToLower().Trim()));
+
+                int keywordMatchCount = gameKeywords.Intersect(targetKeywords, StringComparer.OrdinalIgnoreCase).Count();
+
+                int tagMatchCount = gameTags.Intersect(targetTags, StringComparer.OrdinalIgnoreCase).Count();
+                int finalScore = keywordMatchCount + (tagMatchCount * 5);
+
+                return new
                 {
                     Appid = game.Appid,
                     Name = game.Name,
-                    matchscore = game.keywords.Split(',').Intersect(targetkeywords).Count(),
-                    Sharedkeywords = game.keywords.Split(',').Intersect(targetkeywords)
-
-
-                }
-
-                ). Where(x=> x.matchscore>0).
-                OrderByDescending(x=> x.matchscore)
-                .Take(5)
-                .ToList();
+                    matchscore = finalScore,
+                    Sharedkeywords = gameKeywords.Intersect(targetKeywords, StringComparer.OrdinalIgnoreCase),
+                    Tags = gameTags,
+                    IsMature = isMatureContent 
+                };
+            })
+            .Where(x => x.matchscore > 0)
+            .OrderByDescending(x => x.matchscore)
+            .Take(10)
+            .ToList();
             return Ok(new
             {
                 TargetGame = targetgame.Name,
@@ -138,6 +185,21 @@ namespace Game_Recommender_API.Controllers
             });
 
 
+
+        }
+        [HttpPost("patch-existing-tags")]
+        public async Task<IActionResult> PatchTags() 
+        {
+            var gameneed = await _dbContext.Games.Where(g => string.IsNullOrEmpty(g.Tags)).ToListAsync();
+            foreach (var game in gameneed) 
+            {
+                var fetchedTags = await _steamService.GetTagsForGame(game.Appid);
+                game.Tags = string.Join(",", fetchedTags);
+                _dbContext.Update(game);
+                await Task.Delay(1000);
+            }
+            await _dbContext.SaveChangesAsync();
+            return Ok(new { message = $"Successfully updated {gameneed.Count} games with Tags!" });
 
         }
     }

@@ -1,5 +1,5 @@
-﻿using System.Text.Json;
-using Game_Recommender_API.Models;
+﻿using Game_Recommender_API.Models;
+using System.Text.Json;
 namespace Game_Recommender_API.Services
 {
     public class SteamReviewService
@@ -10,9 +10,9 @@ namespace Game_Recommender_API.Services
         {
             _httpClient = httpClient;
         }
-        public async Task<Dictionary<string, string>> Gettop100game() 
+        public async Task<Dictionary<string, string>> Gettop100game()
         {
-            string url = "https://steamspy.com/api.php?request=all&page=0";
+            string url = "https://steamspy.com/api.php?request=all&page=2";
             var response = await _httpClient.GetAsync(url);
             response.EnsureSuccessStatusCode();
             var jsonstring = await response.Content.ReadAsStringAsync();
@@ -20,10 +20,38 @@ namespace Game_Recommender_API.Services
             if (result == null) return new Dictionary<string, string>();
 
             return result.ToDictionary(
-                x => x.Key,         
-                x => x.Value.name    
+                x => x.Key,
+                x => x.Value.name
             );
         }
+        public async Task<List<string>> GetTagsForGame(string appid)
+        {
+            try { 
+            string url = $"https://steamspy.com/api.php?request=appdetails&appid={appid}";
+            var response = await _httpClient.GetAsync(url);
+            response.EnsureSuccessStatusCode();
+            var jsonstring = await response.Content.ReadAsStringAsync();
+            using var document = System.Text.Json.JsonDocument.Parse(jsonstring);
+            var root = document.RootElement;
+            if (root.TryGetProperty("tags", out var tagsElement) && tagsElement.ValueKind == System.Text.Json.JsonValueKind.Object)
+            {
+
+                var tagsList = tagsElement.EnumerateObject()
+                                          .Select(t => t.Name)
+                                          .ToList();
+                return tagsList;
+            }
+
+            return new List<string>();
+        }
+    
+    catch
+    {
+      
+        return new List<string>();
+    }
+
+}
         public async Task<List<string>> GetGameReviewsAsync(string appId) 
         {
             string url = $"https://store.steampowered.com/appreviews/{appId}?json=1&language=english&num_per_page=100";
