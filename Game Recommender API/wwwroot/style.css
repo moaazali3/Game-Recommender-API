@@ -735,8 +735,9 @@ button:active {
 
     .autocomplete-dropdown {
         width: 100%;
-        top: auto;
+        top: 60px;
         font-size: 0.95rem;
+        z-index: 200;
     }
 
     /* Recommendations Grid */
