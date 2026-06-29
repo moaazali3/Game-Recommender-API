@@ -10,9 +10,9 @@ namespace Game_Recommender_API.Services
         {
             _httpClient = httpClient;
         }
-        public async Task<Dictionary<string, string>> Gettop100game()
+        public async Task<Dictionary<string, string>> Gettop1000game()
         {
-            string url = "https://steamspy.com/api.php?request=all&page=2";
+            string url = "https://steamspy.com/api.php?request=all&page=3";
             var response = await _httpClient.GetAsync(url);
             response.EnsureSuccessStatusCode();
             var jsonstring = await response.Content.ReadAsStringAsync();
@@ -23,6 +23,21 @@ namespace Game_Recommender_API.Services
                 x => x.Key,
                 x => x.Value.name
             );
+        }
+        public async Task<SteamSpyGame> Getgame(string appid)
+        {
+            string url = $"https://steamspy.com/api.php?request=appdetails&appid={appid}";
+
+            var response = await _httpClient.GetAsync(url);
+            response.EnsureSuccessStatusCode();
+
+            var jsonstring = await response.Content.ReadAsStringAsync();
+
+        
+            var game = JsonSerializer.Deserialize<SteamSpyGame>(jsonstring);
+            if (game == null)
+                return new SteamSpyGame();
+            return game;
         }
         public async Task<List<string>> GetTagsForGame(string appid)
         {

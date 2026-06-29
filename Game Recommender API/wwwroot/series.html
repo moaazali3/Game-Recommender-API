@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Series Story Timeline - Game Recommender</title>
+    <meta name="description" content="A smart game recommendation engine and series timeline tracker based on Steam reviews and AI. Find what to play next!">
+    <meta name="keywords" content="game recommendations, play next, game timeline, PC games, Steam alternatives">
+    <meta property="og:title" content="Game Recommender - Series Timeline">
+    <meta property="og:description" content="Discover your next favorite game and explore chronological series timelines.">
+    <meta property="og:image" content="http://game-recommender.runasp.net/cover-image.jpg">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-VMPFBZ8ZSD"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-VMPFBZ8ZSD');
+    </script>
+</head>
+<body>
+    <div class="background-effects">
+        <div class="glow-orb orb-1"></div>
+        <div class="glow-orb orb-2"></div>
+    </div>
+
+    <button onclick="window.location.href='index.html'" class="back-btn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+        Back
+    </button>
+
+    <main class="container">
+        <section class="hero" style="margin-top: 8vh; margin-bottom: 4rem;">
+            <h1>Explore <span class="highlight">Game Series</span></h1>
+
+            <div class="search-container">
+                <input type="text" id="seriesSearchInput" placeholder="Enter Series Name (e.g., Dark Souls)"
+                    autocomplete="off">
+                <div id="seriesAutocompleteDropdown" class="autocomplete-dropdown hidden"></div>
+            </div>
+        </section>
+
+        <!-- Loading / Error states for main content -->
+        <section id="seriesLoadingState" class="hidden" style="margin-top: 3rem;">
+            <div class="loader" style="margin: 0 auto 1.5rem auto;">
+                <div class="pulse"></div>
+            </div>
+            <p style="text-align: center; color: var(--text-muted);">Loading series data...</p>
+        </section>
+
+        <section id="seriesErrorState" class="hidden error-card" style="margin: 2rem auto; width: 90%;">
+            <h3>Error</h3>
+            <p>Could not fetch series data.</p>
+        </section>
+
+        <!-- Grid for all series (default view) -->
+        <section id="allSeriesSection" class="hidden" style="width: 100%;">
+            <h3 class="recommendations-title">All Series</h3>
+            <div id="seriesGrid" class="recommendations-grid">
+                <!-- Injected via JS -->
+            </div>
+        </section>
+
+        <!-- Timeline view (when a series is selected) -->
+        <section id="timelineSection" class="hidden" style="width: 100%; margin-top: 4rem;">
+            <div class="timeline-header">
+                <h2 id="timelineSeriesTitle" style="text-align: center; margin-bottom: 2rem; font-size: 2.8rem; font-weight: 800; letter-spacing: -1px;">Series Story Timeline</h2>
+                <div class="toggle-container" style="justify-content: center;">
+                    <span class="toggle-label">All</span>
+                    <label class="switch">
+                        <input type="checkbox" id="mainlineToggle">
+                        <span class="slider round"></span>
+                    </label>
+                    <span class="toggle-label">Mainline Only</span>
+                </div>
+            </div>
+
+            <div id="timelineLoadingState" class="hidden" style="margin-top: 3rem;">
+                <div class="loader" style="margin: 0 auto 1.5rem auto;">
+                    <div class="pulse"></div>
+                </div>
+                <p style="text-align: center; color: var(--text-muted);">Charting the chronological path...</p>
+            </div>
+
+            <div id="timelineErrorState" class="hidden error-card" style="margin: 2rem auto; width: 90%;">
+                <h3>Timeline Not Found</h3>
+                <p>Could not fetch the series timeline at this moment.</p>
+            </div>
+
+            <div id="timelineContainer" class="timeline-wrapper hidden" style="margin-top: 2rem;">
+                <!-- Injected via JS -->
+            </div>
+        </section>
+    </main>
+
+    <script src="series.js"></script>
+</body>
+</html>

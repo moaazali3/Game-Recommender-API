@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
@@ -6,6 +6,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <RootNamespace>Game_Recommender_API</RootNamespace>
 	  <NuGetAudit>false</NuGetAudit>
+    <UserSecretsId>f0567a65-940e-42ba-b1a3-440f790e8b3f</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>

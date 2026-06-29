@@ -107,19 +107,27 @@ h1 {
     display: inline-block;
 }
 
+.search-wrapper {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
+}
+
 .search-container {
     display: flex;
-    gap: 1rem;
     width: 100%;
     position: relative;
     z-index: 10;
-    padding: 0.5rem;
+    padding: 0.4rem;
     background: rgba(255, 255, 255, 0.05);
     border: 1px solid var(--card-border);
     border-radius: 50px;
-    backdrop-filter: blur(10px);
+    backdrop-filter: blur(12px);
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
     transition: all 0.3s ease;
+    align-items: center;
 }
 
 .search-container:focus-within {
@@ -146,7 +154,7 @@ button {
     background: linear-gradient(135deg, var(--accent), #5e17eb);
     color: white;
     border: none;
-    padding: 0 2.5rem;
+    padding: 1rem 2.5rem;
     border-radius: 40px;
     font-size: 1.1rem;
     font-weight: 600;
@@ -166,20 +174,111 @@ button:active {
     transform: translateY(1px);
 }
 
+.embedded-search-btn {
+    padding: 0.8rem 2.5rem;
+    margin-right: 0.2rem;
+}
+
+/* Top Navigation */
+.top-nav {
+    position: absolute;
+    top: 2rem;
+    right: 2rem;
+    display: flex;
+    gap: 15px;
+    z-index: 50;
+}
+
+.nav-btn {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: var(--text-main);
+    padding: 0.6rem 1.2rem;
+    border-radius: 20px;
+    font-size: 0.95rem;
+    font-weight: 500;
+    box-shadow: none;
+    backdrop-filter: blur(10px);
+    white-space: nowrap;
+}
+
+.nav-btn:hover {
+    background: rgba(138, 43, 226, 0.15);
+    border-color: rgba(138, 43, 226, 0.4);
+    box-shadow: 0 0 15px rgba(138, 43, 226, 0.3);
+    color: #fff;
+    transform: translateY(-2px);
+}
+
+/* Trending Section */
+.trending-section {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    animation: fadeIn 0.8s ease backwards 0.3s;
+}
+
+.trending-label {
+    color: var(--text-muted);
+    font-size: 0.95rem;
+    font-weight: 600;
+}
+
+.trending-chips {
+    display: flex;
+    gap: 0.8rem;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.trending-chip {
+    padding: 0.4rem 1rem;
+    border-radius: 20px;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    color: var(--text-muted);
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.trending-chip:hover {
+    background: rgba(138, 43, 226, 0.1);
+    border-color: rgba(138, 43, 226, 0.3);
+    color: var(--text-main);
+    transform: translateY(-1px);
+}
+
 /* Autocomplete Dropdown */
 .autocomplete-dropdown {
     position: absolute;
     top: 110%;
     left: 0;
     width: 100%;
-    background: rgba(10, 10, 12, 0.9);
+    background: #1a1a24;
     border: 1px solid var(--card-border);
     border-radius: 15px;
     backdrop-filter: blur(16px);
     z-index: 100;
     max-height: 300px;
     overflow-y: auto;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    box-shadow: 0 15px 35px rgba(0,0,0,0.6), 0 0 20px rgba(138, 43, 226, 0.1);
+}
+
+/* Custom Scrollbar for Dropdown */
+.autocomplete-dropdown::-webkit-scrollbar {
+    width: 8px;
+}
+.autocomplete-dropdown::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.02);
+    border-radius: 10px;
+}
+.autocomplete-dropdown::-webkit-scrollbar-thumb {
+    background: rgba(138, 43, 226, 0.3);
+    border-radius: 10px;
+}
+.autocomplete-dropdown::-webkit-scrollbar-thumb:hover {
+    background: rgba(138, 43, 226, 0.6);
 }
 
 .autocomplete-item {
@@ -187,8 +286,10 @@ button:active {
     color: var(--text-main);
     cursor: pointer;
     border-bottom: 1px solid rgba(255,255,255,0.05);
-    transition: background 0.2s ease;
+    transition: all 0.2s ease;
     text-align: left;
+    position: relative;
+    overflow: hidden;
 }
 
 .autocomplete-item:last-child {
@@ -196,7 +297,58 @@ button:active {
 }
 
 .autocomplete-item:hover {
-    background: rgba(138, 43, 226, 0.2);
+    background: linear-gradient(90deg, rgba(138, 43, 226, 0.2) 0%, rgba(138, 43, 226, 0.05) 100%);
+    color: white;
+    padding-left: 2rem;
+}
+
+.autocomplete-item:hover::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 100%;
+    width: 4px;
+    background: var(--accent);
+    box-shadow: 0 0 10px var(--accent);
+}
+
+/* Back Button */
+.back-btn {
+    position: absolute;
+    top: 2rem;
+    left: 2rem;
+    z-index: 50;
+    background: transparent;
+    border: none;
+    color: var(--text-muted);
+    font-size: 1.1rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+    padding: 0.5rem 1rem;
+    border-radius: 30px;
+    transition: all 0.3s ease;
+    box-shadow: none;
+}
+
+.back-btn svg {
+    width: 20px;
+    height: 20px;
+    transition: transform 0.3s ease;
+}
+
+.back-btn:hover {
+    color: white;
+    background: rgba(138, 43, 226, 0.1);
+    box-shadow: 0 0 15px rgba(138, 43, 226, 0.4);
+    transform: translateY(0);
+}
+
+.back-btn:hover svg {
+    transform: translateX(-5px);
 }
 
 /* Loading State */
@@ -692,45 +844,83 @@ button:active {
 
 /* Mobile Responsiveness */
 @media (max-width: 768px) {
+    /* 1. Top Navigation: Swipeable Horizontal Row */
+    .top-nav {
+        position: relative;
+        top: 0;
+        right: 0;
+        width: 100%;
+        justify-content: flex-start;
+        padding: 1rem;
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none; /* Firefox */
+        -ms-overflow-style: none; /* IE/Edge */
+    }
+
+    .top-nav::-webkit-scrollbar {
+        display: none; /* Chrome/Safari */
+    }
+
+    .nav-btn {
+        flex: 0 0 auto; /* Prevent buttons from shrinking */
+        padding: 0.5rem 1rem;
+        font-size: 0.85rem;
+    }
+
+    .back-btn {
+        top: 1rem;
+        left: 1rem;
+        padding: 0.4rem 0.8rem;
+        font-size: 0.9rem;
+    }
+
     /* General Spacing */
     .container {
         padding: 1rem;
     }
 
+    /* 2. Typography: Main Heading */
     .hero {
-        margin-top: 4vh;
+        margin-top: 1.5rem;
         margin-bottom: 2rem;
     }
 
     h1 {
-        font-size: 2.5rem;
+        font-size: 2.2rem;
+        line-height: 1.2;
     }
 
-    /* Search Bar & Autocomplete */
+    /* 3. Search Input & Button */
     .search-container {
         width: 100%;
         flex-direction: column;
-        border-radius: 20px;
         background: transparent;
         border: none;
         box-shadow: none;
         padding: 0;
+        gap: 0.8rem;
     }
 
     .search-container input {
         width: 100%;
+        margin-bottom: 0;
+        padding: 1rem 1.2rem;
         border-radius: 20px;
         background: rgba(255, 255, 255, 0.05);
         border: 1px solid var(--card-border);
-        margin-bottom: 0.5rem;
+        box-sizing: border-box;
         font-size: 1rem;
-        padding: 0.8rem 1.2rem;
     }
 
     .search-container button {
         width: 100%;
+        margin: 0;
         padding: 1rem;
-        font-size: 1rem;
+        border-radius: 20px;
+        box-sizing: border-box;
+        font-size: 1.1rem;
     }
 
     .autocomplete-dropdown {
@@ -784,11 +974,322 @@ button:active {
         gap: 1rem;
     }
 
-    /* About button */
-    .about-btn {
-        top: 10px;
-        right: 10px;
-        padding: 0.5rem 1rem;
-        font-size: 0.8rem;
+
+}
+
+/* Timeline Modal specific */
+.timeline-modal-content {
+    max-width: 700px;
+    width: 95%;
+    max-height: 90vh;
+    display: flex;
+    flex-direction: column;
+    padding: 2rem;
+}
+
+.timeline-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    padding-bottom: 1.5rem;
+    flex-shrink: 0;
+}
+
+.timeline-btn {
+    position: absolute;
+    top: 20px;
+    right: 150px;
+    padding: 0.6rem 1.5rem;
+    font-size: 0.9rem;
+    z-index: 50;
+    border-radius: 30px;
+    background: linear-gradient(135deg, #00d4ff, #0088ff);
+    box-shadow: 0 4px 15px rgba(0, 212, 255, 0.4);
+}
+.timeline-btn:hover {
+    background: linear-gradient(135deg, #33dfff, #0099ff);
+    box-shadow: 0 6px 20px rgba(0, 212, 255, 0.6);
+}
+
+/* Toggle Switch */
+.toggle-container {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.toggle-label {
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    font-weight: 600;
+}
+
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 50px;
+    height: 26px;
+}
+
+.switch input { 
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(255, 255, 255, 0.1);
+    transition: .4s;
+    border: 1px solid var(--card-border);
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 18px;
+    width: 18px;
+    left: 4px;
+    bottom: 3px;
+    background-color: var(--text-main);
+    transition: .4s;
+}
+
+input:checked + .slider {
+    background-color: var(--accent);
+    border-color: var(--accent);
+}
+
+input:focus + .slider {
+    box-shadow: 0 0 1px var(--accent);
+}
+
+input:checked + .slider:before {
+    transform: translateX(22px);
+}
+
+.slider.round {
+    border-radius: 26px;
+}
+
+.slider.round:before {
+    border-radius: 50%;
+}
+
+/* Timeline Layout - Zig-Zag Quest Map */
+.timeline-wrapper {
+    position: relative;
+    padding: 2rem 0;
+    margin: 0 auto;
+    width: 100%;
+    max-width: 800px;
+    overflow-x: hidden;
+}
+
+/* The vertical glowing neon line */
+.timeline-wrapper::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    height: 100%;
+    width: 4px;
+    background: var(--accent);
+    box-shadow: 0 0 15px var(--accent), 0 0 30px rgba(0, 212, 255, 0.6);
+    border-radius: 10px;
+}
+
+.timeline-item {
+    position: relative;
+    margin-bottom: 4rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    opacity: 0;
+    animation: fadeIn 0.5s ease forwards;
+}
+
+.timeline-marker {
+    position: absolute;
+    left: 50%;
+    transform: translate(-50%, 0);
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: var(--bg-dark);
+    border: 4px solid var(--accent);
+    color: white;
+    font-weight: 800;
+    font-size: 1.1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 0 20px rgba(138, 43, 226, 0.8), inset 0 0 10px rgba(138, 43, 226, 0.5);
+    z-index: 2;
+    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.3s;
+}
+
+.timeline-item:hover .timeline-marker {
+    transform: translate(-50%, 0) scale(1.2);
+    box-shadow: 0 0 30px #00d4ff, inset 0 0 15px #00d4ff;
+    border-color: #00d4ff;
+}
+
+.timeline-card {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 12px;
+    padding: 1rem;
+    display: flex;
+    gap: 1.5rem;
+    width: 42%;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+    transition: transform 0.3s, border-color 0.3s, box-shadow 0.3s;
+    position: relative;
+    text-align: left;
+}
+
+/* Zig-Zag Alternating Logic */
+.timeline-item:nth-child(odd) {
+    justify-content: flex-start;
+}
+.timeline-item:nth-child(even) {
+    justify-content: flex-end;
+}
+
+/* Connective Line to Node */
+.timeline-card::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 20px;
+    height: 4px;
+    background: var(--accent);
+    box-shadow: 0 0 10px var(--accent);
+    z-index: 0;
+    transition: background 0.3s, box-shadow 0.3s;
+}
+
+.timeline-item:nth-child(odd) .timeline-card::before {
+    right: -20px;
+}
+.timeline-item:nth-child(even) .timeline-card::before {
+    left: -20px;
+}
+
+.timeline-item:hover .timeline-card::before {
+    background: #00d4ff;
+    box-shadow: 0 0 15px #00d4ff;
+}
+
+.timeline-card:hover {
+    transform: translateY(-5px);
+    border-color: #00d4ff;
+    box-shadow: 0 15px 40px rgba(0, 212, 255, 0.2);
+}
+
+.timeline-img {
+    width: 120px;
+    height: 160px; /* Taller image for better mapping aesthetic */
+    object-fit: cover;
+    border-radius: 8px;
+    background: #1a1a1c;
+    flex-shrink: 0;
+}
+
+.timeline-info {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.timeline-title {
+    font-size: 1.3rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    color: white;
+}
+
+.timeline-date {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    margin-bottom: 0.8rem;
+}
+
+.mainline-badge {
+    align-self: flex-start;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    font-weight: 700;
+    padding: 0.3rem 0.8rem;
+    border-radius: 12px;
+}
+
+.badge-mainline {
+    background: rgba(138, 43, 226, 0.2);
+    color: #e0b0ff;
+    border: 1px solid rgba(138, 43, 226, 0.5);
+    box-shadow: 0 0 10px rgba(138, 43, 226, 0.2);
+}
+
+.badge-spinoff {
+    background: rgba(255, 255, 255, 0.1);
+    color: var(--text-muted);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* Star Rating */
+.star-rating {
+    display: flex;
+    gap: 0.5rem;
+    font-size: 3rem;
+    cursor: pointer;
+    color: rgba(255, 255, 255, 0.1);
+    justify-content: center;
+}
+.star-rating span {
+    transition: color 0.2s, transform 0.2s;
+}
+.star-rating span:hover {
+    transform: scale(1.15);
+}
+.star-rating span.active {
+    color: var(--accent);
+    text-shadow: 0 0 20px var(--accent);
+}
+
+@media (max-width: 768px) {
+    .timeline-wrapper::before {
+        left: 30px;
+    }
+    .timeline-marker {
+        left: 30px;
+    }
+    .timeline-item:nth-child(odd),
+    .timeline-item:nth-child(even) {
+        justify-content: flex-end;
+    }
+    .timeline-card {
+        width: calc(100% - 70px);
+        margin-left: 0;
+    }
+    .timeline-item:nth-child(odd) .timeline-card::before,
+    .timeline-item:nth-child(even) .timeline-card::before {
+        left: -20px;
+        right: auto;
     }
 }
+
+.timeline-img { object-fit: cover; }
+

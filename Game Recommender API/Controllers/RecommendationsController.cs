@@ -1,9 +1,10 @@
-using Game_Recommender_API.Services;
 using Game_Recommender_API.Data;
+using Game_Recommender_API.Models;
+using Game_Recommender_API.Services;
 using Microsoft.AspNetCore.Mvc;
-using System.Net.WebSockets;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
+using System.Net.WebSockets;
 
 namespace Game_Recommender_API.Controllers
 {
@@ -16,7 +17,7 @@ namespace Game_Recommender_API.Controllers
         private readonly AppDbContext _dbContext;
 
         // عملنا Inject للخدمتين
-        public RecommendationsController(SteamReviewService steamService, TextAnalyzerService textAnalyzer,AppDbContext appDbContext)
+        public RecommendationsController(SteamReviewService steamService, TextAnalyzerService textAnalyzer, AppDbContext appDbContext)
         {
             _steamService = steamService;
             _textAnalyzer = textAnalyzer;
@@ -40,23 +41,23 @@ namespace Game_Recommender_API.Controllers
             });
         }
         [HttpPost("seed")]
-        public async Task<IActionResult> getgamesinfo() 
+        public async Task<IActionResult> getgamesinfo()
         {
-            var result = await _steamService.Gettop100game();
+            var result = await _steamService.Gettop1000game();
             int currentIndex = 1;
-            int totalGames = result.Count; 
-            foreach (var game in result) 
+            int totalGames = result.Count;
+            foreach (var game in result)
             {
                 string currappid = game.Key;
                 string currappname = game.Value;
                 Console.WriteLine($" جاري المعالجة ({currentIndex}/{totalGames}): {currappname}...");
-                if (_dbContext.Games.Any(g => g.Appid == currappid)) 
+                if (_dbContext.Games.Any(g => g.Appid == currappid))
                 {
                     continue;
                 }
                 var review = await _steamService.GetGameReviewsAsync(currappid);
 
-                if(review ==null|| review.Count == 0) 
+                if (review == null || review.Count == 0)
                 {
                     continue;
                 }
@@ -80,6 +81,47 @@ namespace Game_Recommender_API.Controllers
             await _dbContext.SaveChangesAsync();
             return Ok("تم سحب الألعاب وتحليلها وحفظها في قاعدة البيانات بنجاح!");
         }
+        [HttpPost("add-game/{appid}")]
+        public async Task<IActionResult> addgame(string appid)
+        {
+            var game = await _steamService.Getgame(appid);
+            var review = await _steamService.GetGameReviewsAsync(appid);
+
+            if (review == null || review.Count == 0)
+            {
+                return NotFound(new { message = "مش موجوده" });
+            }
+            var keywordslist = _textAnalyzer.ExtractTopKeywords(review, 15);
+            string keywordstring = string.Join(",", keywordslist);
+            var newgame = new Models.Game
+            {
+                Appid = appid,
+                Name = game.name,
+                keywords = keywordstring,
+                LastUpdated = DateTime.Now
+
+            };
+            _dbContext.Games.Add(newgame);
+            await _dbContext.SaveChangesAsync();
+            return Ok(newgame);
+    
+         }
+        [HttpPost("feedback")]
+        public async Task<IActionResult> addfeedback([FromBody] FeedbackInputDto input)
+        {
+
+            var newinput = new Models.Feedback
+            {
+                Description = input.Message,
+                Rating = input.Rating ?? 0,
+                dateTime= DateTime.Now
+
+            };
+            _dbContext.Feedbacks.Add(newinput);
+            await _dbContext.SaveChangesAsync();
+            return Ok(newinput);
+
+        }
         [HttpGet("autocomplete")]
         public async Task<IActionResult> Autocomplete([FromQuery] string q)
         {
@@ -92,7 +134,8 @@ namespace Game_Recommender_API.Controllers
 
             
             var allMatches = await _dbContext.Games
-                .Where(g => g.Name.ToLower().Contains(q.ToLower()))
+                .Where(g => g.Name != null && g.Name.ToLower().Contains(q.ToLower()))
+                .Take(20)
                 .ToListAsync();
 
             

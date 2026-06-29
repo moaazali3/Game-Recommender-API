@@ -5,11 +5,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const aboutBtn = document.getElementById('aboutBtn');
     const infoModal = document.getElementById('infoModal');
     const closeModalBtn = document.getElementById('closeModalBtn');
-    
+
     const loadingState = document.getElementById('loadingState');
     const errorState = document.getElementById('errorState');
     const resultsSection = document.getElementById('resultsSection');
-    
+
     const targetGameContainer = document.getElementById('targetGameContainer');
     const recommendationsGrid = document.getElementById('recommendationsGrid');
 
@@ -55,13 +55,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const renderResults = (data, searchInputVal) => {
         hideAllSections();
-        
+
         targetGameContainer.innerHTML = '';
         recommendationsGrid.innerHTML = '';
 
         // Handle Target Game
         const targetName = data.targetgame || data.targetGame || data.Targetgame || searchInputVal;
-        
+
         // Check if the search input was a numeric ID to attempt getting its cover
         let targetAppId = null;
         if (!isNaN(searchInputVal) && searchInputVal.trim() !== '') {
@@ -114,7 +114,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 const card = document.createElement('div');
                 card.className = isMature ? 'game-card mature-card' : 'game-card';
-                
+
                 const matureBadgeHtml = isMature ? `<span class="mature-badge">18+ Mature</span>` : '';
 
                 card.innerHTML = `
@@ -144,7 +144,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         performSearch();
                     });
                 }
-                
+
                 recommendationsGrid.appendChild(card);
             });
         }
@@ -159,15 +159,15 @@ document.addEventListener('DOMContentLoaded', () => {
         showLoading();
 
         try {
-           
+
             const response = await fetch(`/api/Recommendations/${searchTerm}/recommendations`);
-            
+
             if (!response.ok) {
                 throw new Error('Game not found or API error');
             }
 
             const data = await response.json();
-            
+
             const recList = data.recommendations || data.recommend || data.Recommend || data.Recommendations;
             const tGame = data.targetgame || data.targetGame || data.Targetgame;
 

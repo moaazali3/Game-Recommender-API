@@ -4,9 +4,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Game Recommender System</title>
+    <title>Game Recommender - Discover Your Next Favorite Game</title>
+    <meta name="description" content="A smart game recommendation engine and series timeline tracker based on Steam reviews and AI. Find what to play next!">
+    <meta name="keywords" content="game recommendations, play next, game timeline, PC games, Steam alternatives">
+    <meta property="og:title" content="Game Recommender">
+    <meta property="og:description" content="Discover your next favorite game and explore chronological series timelines.">
+    <meta property="og:image" content="http://game-recommender.runasp.net/cover-image.jpg">
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-VMPFBZ8ZSD"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-VMPFBZ8ZSD');
+    </script>
 </head>
 
 <body>
@@ -15,17 +29,23 @@
         <div class="glow-orb orb-2"></div>
     </div>
 
-    <button id="aboutBtn" class="about-btn">About Site</button>
+    <div class="top-nav">
+        <button id="timelineBtn" class="nav-btn" onclick="window.location.href='series.html'">View Series Timeline</button>
+        <button class="nav-btn" onclick="window.location.href='feedback.html'">Feedback</button>
+        <button id="aboutBtn" class="nav-btn">About Site</button>
+    </div>
 
     <main class="container">
         <section class="hero">
             <h1>Discover Your Next <span class="highlight">Favorite Game</span></h1>
 
-            <div class="search-container">
-                <input type="text" id="searchInput" placeholder="Enter Game Name or Steam ID (e.g., Among Us or 730)"
-                    autocomplete="off">
-                <button id="searchBtn">Search</button>
-                <div id="autocompleteDropdown" class="autocomplete-dropdown hidden"></div>
+            <div class="search-wrapper">
+                <div class="search-container">
+                    <input type="text" id="searchInput" placeholder="Enter Game Name (e.g., Dark Souls III)"
+                        autocomplete="off">
+                    <button id="searchBtn" class="embedded-search-btn">Search</button>
+                    <div id="autocompleteDropdown" class="autocomplete-dropdown hidden"></div>
+                </div>
             </div>
         </section>
 

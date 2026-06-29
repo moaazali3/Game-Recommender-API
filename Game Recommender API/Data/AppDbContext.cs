@@ -10,5 +10,9 @@ namespace Game_Recommender_API.Data
         {
         }
         public DbSet<Game> Games { get; set; }
+        public DbSet<Series> Series { get; set; }
+        public DbSet<SeriesGame> SeriesGames { get; set; }
+        public DbSet<Feedback> Feedbacks { get; set; }
+
     }
 }
