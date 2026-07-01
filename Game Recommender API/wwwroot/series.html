@@ -10,7 +10,7 @@
     <meta property="og:description" content="Discover your next favorite game and explore chronological series timelines.">
     <meta property="og:image" content="http://game-recommender.runasp.net/cover-image.jpg">
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style.css?v=2">
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-VMPFBZ8ZSD"></script>
     <script>
@@ -27,14 +27,15 @@
         <div class="glow-orb orb-2"></div>
     </div>
 
-    <button onclick="window.location.href='index.html'" class="back-btn">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
-        Back
-    </button>
+    <div class="top-nav">
+        <button id="langToggleBtn" class="nav-btn" data-i18n="lang_toggle">🌐 AR</button>
+        <button class="nav-btn" onclick="window.location.href='index.html'" data-i18n="back_to_search">Back to Search</button>
+        <button class="nav-btn" onclick="window.location.href='feedback.html'" data-i18n="nav_feedback">Feedback</button>
+    </div>
 
     <main class="container">
-        <section class="hero" style="margin-top: 8vh; margin-bottom: 4rem;">
-            <h1>Explore <span class="highlight">Game Series</span></h1>
+        <section class="hero" style="min-height: 30vh; padding: 2rem 1rem;">
+            <h1 id="timelineSeriesTitle" data-i18n="series_timeline_title">Series Story <span class="highlight">Timeline</span></h1>
 
             <div class="search-container">
                 <input type="text" id="seriesSearchInput" placeholder="Enter Series Name (e.g., Dark Souls)"
@@ -65,17 +66,16 @@
         </section>
 
         <!-- Timeline view (when a series is selected) -->
-        <section id="timelineSection" class="hidden" style="width: 100%; margin-top: 4rem;">
-            <div class="timeline-header">
-                <h2 id="timelineSeriesTitle" style="text-align: center; margin-bottom: 2rem; font-size: 2.8rem; font-weight: 800; letter-spacing: -1px;">Series Story Timeline</h2>
-                <div class="toggle-container" style="justify-content: center;">
-                    <span class="toggle-label">All</span>
-                    <label class="switch">
-                        <input type="checkbox" id="mainlineToggle">
-                        <span class="slider round"></span>
-                    </label>
-                    <span class="toggle-label">Mainline Only</span>
-                </div>
+        <section id="timelineSection" class="hidden" style="width: 100%;">
+            <div class="toggle-container" style="display: flex; align-items: center; justify-content: center; margin-bottom: 2rem; gap: 1rem;">
+                <span style="color: var(--text-muted); font-size: 0.9rem;" data-i18n="show_all_games">Show all games</span>
+                
+                <label class="toggle-switch">
+                    <input type="checkbox" id="mainlineToggle">
+                    <span class="slider"></span>
+                </label>
+                
+                <span style="color: var(--accent); font-weight: bold; font-size: 0.9rem;" data-i18n="mainline_only">Mainline Games Only</span>
             </div>
 
             <div id="timelineLoadingState" class="hidden" style="margin-top: 3rem;">
@@ -96,6 +96,7 @@
         </section>
     </main>
 
-    <script src="series.js"></script>
+    <script src="lang.js?v=2"></script>
+    <script src="series.js?v=2"></script>
 </body>
 </html>

@@ -10,7 +10,7 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 builder.Services.AddSingleton<TextAnalyzerService>();
 builder.Services.AddHttpClient<GameApiService>();
 builder.Services.AddHttpClient<SteamReviewService>();
@@ -20,6 +20,8 @@ builder.Services.AddCors(options =>
         builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
 });
 var app = builder.Build();
+
+
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();

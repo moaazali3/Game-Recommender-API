@@ -15,6 +15,35 @@ document.addEventListener('DOMContentLoaded', () => {
     const timelineContainer = document.getElementById('timelineContainer');
     const emptyStateSection = document.getElementById('emptyStateSection');
 
+    let activeSeriesName = null;
+
+    function updateTimelineTitle(seriesName) {
+        if (!seriesName) {
+            timelineSeriesTitle.setAttribute('data-i18n', 'series_timeline_title');
+            if (typeof applyLanguage === 'function') {
+                applyLanguage();
+            }
+            return;
+        }
+        
+        timelineSeriesTitle.removeAttribute('data-i18n');
+        const isAr = (typeof currentLang !== 'undefined' ? currentLang : 'en') === 'ar';
+        if (isAr) {
+            timelineSeriesTitle.innerHTML = `التسلسل الزمني لـ <span class="highlight">${seriesName}</span>`;
+        } else {
+            timelineSeriesTitle.innerHTML = `<span class="highlight">${seriesName}</span> Timeline`;
+        }
+    }
+
+    const langBtn = document.getElementById('langToggleBtn');
+    if (langBtn) {
+        langBtn.addEventListener('click', () => {
+            setTimeout(() => {
+                updateTimelineTitle(activeSeriesName);
+            }, 50);
+        });
+    }
+
     // Extract ID from URL
     const urlParams = new URLSearchParams(window.location.search);
     let currentSeriesId = urlParams.get('id');
@@ -48,6 +77,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (response.ok) {
                     const suggestions = await response.json();
                     renderSeriesAutocomplete(suggestions);
+                } else {
+                    const errText = await response.text();
+                    console.error(`API Error ${response.status}:`, errText);
                 }
             } catch (err) {
                 console.error('Series autocomplete error:', err);
@@ -119,15 +151,12 @@ document.addEventListener('DOMContentLoaded', () => {
         seriesLoadingState.classList.add('hidden');
         timelineSection.classList.remove('hidden');
         
-        mainlineToggle.checked = false;
+        mainlineToggle.checked = true;
         
-        if (nameFallback) {
-            timelineSeriesTitle.textContent = `${nameFallback} Timeline`;
-        } else {
-            timelineSeriesTitle.textContent = 'Series Story Timeline';
-        }
+        activeSeriesName = nameFallback;
+        updateTimelineTitle(activeSeriesName);
 
-        fetchTimelineData(id, false);
+        fetchTimelineData(id, true);
     }
 
     async function fetchTimelineData(id, onlyMainline) {
@@ -143,9 +172,10 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             
             const data = await response.json();
-            
-            if (data && data.seriesName) {
-                timelineSeriesTitle.textContent = `${data.seriesName} Timeline`;
+            const sName = data.seriesName || data.SeriesName;
+            if (data && sName) {
+                activeSeriesName = sName;
+                updateTimelineTitle(activeSeriesName);
             }
             
             renderTimeline(data);
@@ -171,6 +201,7 @@ document.addEventListener('DOMContentLoaded', () => {
             
             const isMainline = game.isMainline;
             const badgeClass = isMainline ? 'badge-mainline' : 'badge-spinoff';
+            const badgeI18nKey = isMainline ? 'mainline' : 'spinoff';
             const badgeText = isMainline ? 'Mainline' : 'Spin-off';
             
             let dateStr = game.releaseDate;
@@ -191,13 +222,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const itemHTML = `
                 <div class="timeline-item" style="animation-delay: ${delay}s">
-                    <div class="timeline-marker">${game.chronologicalOrder}</div>
+                    <div class="timeline-marker">${index + 1}</div>
                     <div class="timeline-card">
                         <img src="${coverUrl}" alt="${game.title}" class="timeline-img" onerror="this.src='https://via.placeholder.com/120x80/1a1a1c/ffffff?text=No+Cover';">
-                        <div class="timeline-info">
+                        <div class="timeline-content">
                             <h4 class="timeline-title">${game.title}</h4>
                             <span class="timeline-date">${dateStr}</span>
-                            <span class="mainline-badge ${badgeClass}">${badgeText}</span>
+                            <span class="mainline-badge ${badgeClass}" data-i18n="${badgeI18nKey}">${badgeText}</span>
                         </div>
                     </div>
                 </div>
@@ -206,6 +237,9 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         timelineContainer.classList.remove('hidden');
+        if (typeof applyLanguage === 'function') {
+            applyLanguage();
+        }
     }
     
     // Handle back button navigation

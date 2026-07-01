@@ -65,7 +65,7 @@ document.addEventListener('DOMContentLoaded', () => {
         
         if (!text) return;
 
-        submitFeedbackBtn.textContent = 'Sending...';
+        submitFeedbackBtn.textContent = translations[currentLang]?.feedback_sending || 'Sending...';
         submitFeedbackBtn.disabled = true;
         feedbackError.classList.add('hidden');
 
@@ -94,7 +94,7 @@ document.addEventListener('DOMContentLoaded', () => {
         } catch (error) {
             console.error('Feedback error:', error);
             feedbackError.classList.remove('hidden');
-            submitFeedbackBtn.textContent = 'Send Feedback';
+            submitFeedbackBtn.textContent = translations[currentLang]?.feedback_send_btn || 'Send Feedback';
             submitFeedbackBtn.disabled = false;
         }
     });

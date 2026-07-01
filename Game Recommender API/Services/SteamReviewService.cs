@@ -67,6 +67,31 @@ namespace Game_Recommender_API.Services
     }
 
 }
+        public async Task<List<string>> GetGameReviewsforaiAsync(string appId)
+        {
+            try
+            {
+                string url = $"https://store.steampowered.com/appreviews/{appId}?json=1&language=english&num_per_page=30"; 
+
+                var response = await _httpClient.GetAsync(url);
+                response.EnsureSuccessStatusCode();
+
+                var jsonString = await response.Content.ReadAsStringAsync();
+
+                // أوبشن مهم جداً عشان الـ C# يقدر يقرأ الـ JSON بتاع ستيم
+                var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+                var result = JsonSerializer.Deserialize<SteamReviewResponse>(jsonString, options);
+
+                return result?.Reviews
+                    .Select(r => r.ReviewText) 
+                    .ToList() ?? new List<string>();
+            }
+            catch
+            {
+            
+                return new List<string>();
+            }
+        }
         public async Task<List<string>> GetGameReviewsAsync(string appId) 
         {
             string url = $"https://store.steampowered.com/appreviews/{appId}?json=1&language=english&num_per_page=100";

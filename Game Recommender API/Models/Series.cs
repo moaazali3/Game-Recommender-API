@@ -1,7 +1,11 @@
-﻿namespace Game_Recommender_API.Models
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace Game_Recommender_API.Models
 {
     public class Series
     {
+        [Key]
+        [MaxLength(100)]
         public int Id { get; set; }
         public string Name { get; set; } = string.Empty;
         public string? Description { get; set; }

@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Game Library</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="bg-elements">
+        <div class="glow-orb orb-1"></div>
+        <div class="glow-orb orb-2"></div>
+    </div>
+
+    <div class="top-nav">
+        <button id="langToggleBtn" class="nav-btn" data-i18n="lang_toggle">🌐 AR</button>
+        <button class="nav-btn" onclick="window.location.href='index.html'" data-i18n="back_to_search">Back to Search</button>
+    </div>
+
+    <main class="container">
+        <section class="hero" style="min-height: 20vh; padding: 2rem 1rem;">
+            <h1 data-i18n="library_title">All Games Library</h1>
+            <p style="color: var(--text-muted); font-size: 1.2rem; margin-top: 1rem;" data-i18n="library_desc">Explore all games available in our database.</p>
+            <div style="margin-top: 2rem;">
+                <span data-i18n="total_games" style="font-size: 1.1rem; color: #fff;">Total Saved Games:</span>
+                <span id="totalGamesCount" style="color: var(--accent); font-weight: bold; font-size: 1.2rem;">0</span>
+            </div>
+            
+            <div class="search-wrapper" style="margin-top: 2rem; width: 100%; max-width: 600px; margin-left: auto; margin-right: auto;">
+                <div class="search-container">
+                    <input type="text" id="librarySearchInput" placeholder="Filter games by name..." data-i18n="search_placeholder" autocomplete="off">
+                </div>
+            </div>
+        </section>
+
+        <section id="libraryLoadingState" class="hidden" style="margin-top: 3rem;">
+            <div class="loader">
+                <div class="pulse"></div>
+            </div>
+            <p data-i18n="loading_text">Scanning the gaming multiverse...</p>
+        </section>
+
+        <section id="libraryErrorState" class="hidden" style="margin-top: 3rem;">
+            <div class="error-card">
+                <h2 data-i18n="error_title">Failed to load library</h2>
+                <p data-i18n="error_desc">There was a problem fetching the games.</p>
+            </div>
+        </section>
+
+        <section id="librarySection" class="hidden" style="width: 100%;">
+            <div id="libraryGrid" class="recommendations-grid" style="margin-top: 2rem;">
+                <!-- Games injected here via JS -->
+            </div>
+        </section>
+    </main>
+
+    <script src="lang.js"></script>
+    <script src="ai-summary.js"></script>
+    <script src="library.js"></script>
+</body>
+</html>

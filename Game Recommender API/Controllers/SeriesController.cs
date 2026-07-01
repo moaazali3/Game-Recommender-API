@@ -155,6 +155,7 @@ namespace Game_Recommender_API.Controllers
             });
 
         }
+
         [HttpPost("bulk-import")]
         public async Task<IActionResult> BulkImportSeries()
         {
@@ -281,14 +282,20 @@ namespace Game_Recommender_API.Controllers
 
            
 
+            try
+            {
+                var allMatches = await _context.Series
+                    .Where(g => g.Name != null && EF.Functions.Like(g.Name, $"%{q}%"))
+                    .Select(g => new { id = g.Id, name = g.Name })
+                    .Take(10)
+                    .ToListAsync();
 
-            var allMatches = await _context.Series
-                .Where(g => g.Name != null && g.Name.ToLower().Contains(q.ToLower()))
-                .Select(g => new { id = g.Id, name = g.Name })
-                .Take(10)
-                .ToListAsync();
-
-            return Ok(allMatches);
+                return Ok(allMatches);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { Error = ex.Message, Inner = ex.InnerException?.Message, StackTrace = ex.StackTrace });
+            }
         }
         [HttpGet("all")]
         public async Task<IActionResult> GetAllGames()
