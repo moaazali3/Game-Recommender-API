@@ -78,11 +78,25 @@ document.addEventListener('DOMContentLoaded', () => {
             targetImageHtml = `<div class="target-image" style="background: linear-gradient(135deg, #1a1a24, #2a1b38); display: flex; align-items: center; justify-content: center; color: rgba(255,255,255,0.2); font-size: 2rem;">No Image Available</div>`;
         }
 
+        const targetHasSeries = data.hasSeries || data.HasSeries;
+        const targetSeriesId = data.seriesId || data.SeriesId;
+
+        let targetButtonsHtml = '';
+        if (targetAppId) {
+            targetButtonsHtml += `<button class="action-btn ai-summary-btn" onclick="window.openAISummary('${targetAppId}')" data-i18n="ai_summary_btn">✨ AI Summary</button>`;
+        }
+        if (targetHasSeries && targetSeriesId) {
+            targetButtonsHtml += `<button class="action-btn similar-btn" onclick="window.location.href='series.html?id=${targetSeriesId}'" data-i18n="view_series">View Series</button>`;
+        }
+
         targetGameContainer.innerHTML = `
             ${targetImageHtml}
             <div class="target-info">
-                <div class="target-label">Target Game</div>
+                <div class="target-label" data-i18n="target_label">Target Game</div>
                 <h2 class="target-title">${targetName}</h2>
+                <div class="card-actions" style="margin-top: 1.5rem; max-width: 350px;">
+                    ${targetButtonsHtml}
+                </div>
             </div>
         `;
 
@@ -111,18 +125,29 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
 
                 const isMature = game.isMature || game.IsMature;
+                const hasSeries = game.hasseries || game.hasSeries;
+                const seriesId = game.seriesid || game.seriesId;
 
                 const card = document.createElement('div');
                 card.className = isMature ? 'game-card mature-card' : 'game-card';
+                if (hasSeries) {
+                    card.classList.add('has-series-card');
+                }
 
                 const matureBadgeHtml = isMature ? `<span class="mature-badge">18+ Mature</span>` : '';
+                
+                let seriesBadgeHtml = '';
+                if (hasSeries && seriesId) {
+                    seriesBadgeHtml = `<button class="series-badge" onclick="event.stopPropagation(); window.location.href='series.html?id=${seriesId}'" data-i18n="view_series">View Series</button>`;
+                }
 
                 card.innerHTML = `
                     <div class="card-image-container">
                         <img src="${getSteamImage(id)}" alt="${name}" class="card-image" onerror="this.src='https://via.placeholder.com/460x215/1a1a1c/ffffff?text=No+Cover';">
                         ${matureBadgeHtml}
+                        ${seriesBadgeHtml}
                         <div class="match-score-badge">
-                            <span class="match-score-label">Match</span>
+                            <span class="match-score-label" data-i18n="match_label">Match</span>
                             <span class="match-score-value">${score}</span>
                         </div>
                     </div>
@@ -130,8 +155,9 @@ document.addEventListener('DOMContentLoaded', () => {
                         <h3 class="card-title">${name}</h3>
                         ${tagsHtml}
                         <div class="card-actions">
-                            <a href="https://store.steampowered.com/app/${id}" target="_blank" class="action-btn steam-btn" onclick="event.stopPropagation()">View on Steam</a>
-                            <button class="action-btn similar-btn" data-name="${name}">Find Similar</button>
+                            <button class="action-btn ai-summary-btn" onclick="event.stopPropagation(); window.openAISummary('${id}')" data-i18n="ai_summary_btn">✨ AI Summary</button>
+                            <a href="https://store.steampowered.com/app/${id}" target="_blank" class="action-btn steam-btn" onclick="event.stopPropagation()" data-i18n="view_steam">View on Steam</a>
+                            <button class="action-btn similar-btn" data-name="${name}" data-i18n="find_similar">Find Similar</button>
                         </div>
                     </div>
                 `;
@@ -150,6 +176,9 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         resultsSection.classList.remove('hidden');
+        if (typeof applyLanguage === 'function') {
+            applyLanguage();
+        }
     };
 
     const performSearch = async () => {
@@ -243,4 +272,12 @@ document.addEventListener('DOMContentLoaded', () => {
             autocompleteDropdown.classList.add('hidden');
         }
     });
+
+    // Check if there is a search query in the URL params (e.g. index.html?search=Dark%20Souls)
+    const urlParams = new URLSearchParams(window.location.search);
+    const searchParam = urlParams.get('search');
+    if (searchParam) {
+        searchInput.value = searchParam;
+        performSearch();
+    }
 });
