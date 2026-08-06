@@ -1,6 +1,7 @@
 const translations = {
     en: {
         // Navigation
+        "nav_ludova_hub": "← Ludova Gateway",
         "nav_timeline": "View Series Timeline",
         "nav_feedback": "Feedback",
         "nav_about": "About Site",
@@ -64,6 +65,7 @@ const translations = {
     },
     ar: {
         // Navigation
+        "nav_ludova_hub": "← مظلة Ludova",
         "nav_timeline": "تسلسل السلاسل",
         "nav_feedback": "آراء المستخدمين",
         "nav_about": "عن الموقع",
@@ -147,9 +149,9 @@ function applyLanguage() {
 
     // Update body class for specific CSS adjustments if needed
     if (currentLang === 'ar') {
-        document.body.classList.add('rtl-mode');
+        document.body.classList.add('body--rtl-mode');
     } else {
-        document.body.classList.remove('rtl-mode');
+        document.body.classList.remove('body--rtl-mode');
     }
 }
 

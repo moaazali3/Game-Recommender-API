@@ -20,17 +20,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (aboutBtn && infoModal && closeModalBtn) {
         aboutBtn.addEventListener('click', () => {
-            infoModal.classList.add('show');
+            infoModal.classList.add('modal-window--show');
         });
 
         closeModalBtn.addEventListener('click', () => {
-            infoModal.classList.remove('show');
+            infoModal.classList.remove('modal-window--show');
         });
 
         // Close on outside click
         infoModal.addEventListener('click', (e) => {
             if (e.target === infoModal) {
-                infoModal.classList.remove('show');
+                infoModal.classList.remove('modal-window--show');
             }
         });
     }
@@ -49,8 +49,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const showLoading = () => {
         hideAllSections();
         resultsSection.classList.remove('hidden');
-        targetGameContainer.innerHTML = `<div class="skeleton-target"></div>`;
-        recommendationsGrid.innerHTML = Array(8).fill(`<div class="skeleton-card"></div>`).join('');
+        targetGameContainer.innerHTML = `<div class="target-game-card--skeleton"></div>`;
+        recommendationsGrid.innerHTML = Array(8).fill(`<div class="game-card--skeleton"></div>`).join('');
     };
 
     const renderResults = (data, searchInputVal) => {
@@ -72,10 +72,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
         let targetImageHtml = '';
         if (targetAppId) {
-            targetImageHtml = `<img src="${getSteamImage(targetAppId)}" alt="${targetName}" class="target-image" onerror="this.src='https://via.placeholder.com/460x215/1a1a1c/ffffff?text=Image+Not+Found';">`;
+            targetImageHtml = `<img src="${getSteamImage(targetAppId)}" alt="${targetName}" class="target-game-card__image" onerror="this.src='https://via.placeholder.com/460x215/1a1a1c/ffffff?text=Image+Not+Found';">`;
         } else {
             // Default abstract aesthetic image if no specific App ID is known for target
-            targetImageHtml = `<div class="target-image" style="background: linear-gradient(135deg, #1a1a24, #2a1b38); display: flex; align-items: center; justify-content: center; color: rgba(255,255,255,0.2); font-size: 2rem;">No Image Available</div>`;
+            targetImageHtml = `<div class="target-game-card__image" style="background: linear-gradient(135deg, #1a1a24, #2a1b38); display: flex; align-items: center; justify-content: center; color: rgba(255,255,255,0.2); font-size: 2rem;">No Image Available</div>`;
         }
 
         const targetHasSeries = data.hasSeries || data.HasSeries;
@@ -83,18 +83,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
         let targetButtonsHtml = '';
         if (targetAppId) {
-            targetButtonsHtml += `<button class="action-btn ai-summary-btn" onclick="window.openAISummary('${targetAppId}')" data-i18n="ai_summary_btn">✨ AI Summary</button>`;
+            targetButtonsHtml += `<button class="game-card__btn game-card__btn--ai-summary" onclick="window.openAISummary('${targetAppId}')" data-i18n="ai_summary_btn">✨ AI Summary</button>`;
         }
         if (targetHasSeries && targetSeriesId) {
-            targetButtonsHtml += `<button class="action-btn similar-btn" onclick="window.location.href='series.html?id=${targetSeriesId}'" data-i18n="view_series">View Series</button>`;
+            targetButtonsHtml += `<button class="game-card__btn game-card__btn--similar" onclick="window.location.href='series.html?id=${targetSeriesId}'" data-i18n="view_series">View Series</button>`;
         }
 
         targetGameContainer.innerHTML = `
             ${targetImageHtml}
-            <div class="target-info">
-                <div class="target-label" data-i18n="target_label">Target Game</div>
-                <h2 class="target-title">${targetName}</h2>
-                <div class="card-actions" style="margin-top: 1.5rem; max-width: 350px;">
+            <div class="target-game-card__info">
+                <div class="target-game-card__label" data-i18n="target_label">Target Game</div>
+                <h2 class="target-game-card__title">${targetName}</h2>
+                <div class="game-card__actions" style="margin-top: 1.5rem; max-width: 350px;">
                     ${targetButtonsHtml}
                 </div>
             </div>
@@ -119,8 +119,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 let tagsHtml = '';
                 if (tagsArray.length > 0) {
-                    tagsHtml = `<div class="tags-container">
-                        ${tagsArray.slice(0, 4).map(t => `<span class="tag-badge">${t}</span>`).join('')}
+                    tagsHtml = `<div class="game-card__tags-container">
+                        ${tagsArray.slice(0, 4).map(t => `<span class="game-card__tag-badge">${t}</span>`).join('')}
                     </div>`;
                 }
 
@@ -129,40 +129,40 @@ document.addEventListener('DOMContentLoaded', () => {
                 const seriesId = game.seriesid || game.seriesId;
 
                 const card = document.createElement('div');
-                card.className = isMature ? 'game-card mature-card' : 'game-card';
+                card.className = isMature ? 'game-card game-card--mature' : 'game-card';
                 if (hasSeries) {
-                    card.classList.add('has-series-card');
+                    card.classList.add('game-card--has-series');
                 }
 
-                const matureBadgeHtml = isMature ? `<span class="mature-badge">18+ Mature</span>` : '';
+                const matureBadgeHtml = isMature ? `<span class="game-card__mature-badge">18+ Mature</span>` : '';
                 
                 let seriesBadgeHtml = '';
                 if (hasSeries && seriesId) {
-                    seriesBadgeHtml = `<button class="series-badge" onclick="event.stopPropagation(); window.location.href='series.html?id=${seriesId}'" data-i18n="view_series">View Series</button>`;
+                    seriesBadgeHtml = `<button class="game-card__series-badge" onclick="event.stopPropagation(); window.location.href='series.html?id=${seriesId}'" data-i18n="view_series">View Series</button>`;
                 }
 
                 card.innerHTML = `
-                    <div class="card-image-container">
-                        <img src="${getSteamImage(id)}" alt="${name}" class="card-image" onerror="this.src='https://via.placeholder.com/460x215/1a1a1c/ffffff?text=No+Cover';">
+                    <div class="game-card__image-container">
+                        <img src="${getSteamImage(id)}" alt="${name}" class="game-card__image" onerror="this.src='https://via.placeholder.com/460x215/1a1a1c/ffffff?text=No+Cover';">
                         ${matureBadgeHtml}
                         ${seriesBadgeHtml}
-                        <div class="match-score-badge">
-                            <span class="match-score-label" data-i18n="match_label">Match</span>
-                            <span class="match-score-value">${score}</span>
+                        <div class="game-card__score-badge">
+                            <span class="game-card__score-label" data-i18n="match_label">Match</span>
+                            <span class="game-card__score-value">${score}</span>
                         </div>
                     </div>
-                    <div class="card-content">
-                        <h3 class="card-title">${name}</h3>
+                    <div class="game-card__content">
+                        <h3 class="game-card__title">${name}</h3>
                         ${tagsHtml}
-                        <div class="card-actions">
-                            <button class="action-btn ai-summary-btn" onclick="event.stopPropagation(); window.openAISummary('${id}')" data-i18n="ai_summary_btn">✨ AI Summary</button>
-                            <a href="https://store.steampowered.com/app/${id}" target="_blank" class="action-btn steam-btn" onclick="event.stopPropagation()" data-i18n="view_steam">View on Steam</a>
-                            <button class="action-btn similar-btn" data-name="${name}" data-i18n="find_similar">Find Similar</button>
+                        <div class="game-card__actions">
+                            <button class="game-card__btn game-card__btn--ai-summary" onclick="event.stopPropagation(); window.openAISummary('${id}')" data-i18n="ai_summary_btn">✨ AI Summary</button>
+                            <a href="https://store.steampowered.com/app/${id}" target="_blank" class="game-card__btn game-card__btn--steam" onclick="event.stopPropagation()" data-i18n="view_steam">View on Steam</a>
+                            <button class="game-card__btn game-card__btn--similar" data-name="${name}" data-i18n="find_similar">Find Similar</button>
                         </div>
                     </div>
                 `;
 
-                const similarBtn = card.querySelector('.similar-btn');
+                const similarBtn = card.querySelector('.game-card__btn--similar');
                 if (similarBtn) {
                     similarBtn.addEventListener('click', (e) => {
                         e.stopPropagation();
@@ -254,7 +254,7 @@ document.addEventListener('DOMContentLoaded', () => {
         autocompleteDropdown.innerHTML = '';
         suggestions.forEach(s => {
             const item = document.createElement('div');
-            item.className = 'autocomplete-item';
+            item.className = 'search-bar__dropdown-item';
             item.textContent = s.name || s.Name;
             item.addEventListener('click', () => {
                 const id = s.appid || s.appId || s.AppId;

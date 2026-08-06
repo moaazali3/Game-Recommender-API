@@ -1,10 +1,10 @@
 document.addEventListener('DOMContentLoaded', () => {
     // Inject the AI Modal HTML into the body
     const modalHtml = `
-        <div id="aiSummaryModal" class="ai-modal">
-            <div class="ai-modal-content">
-                <span class="ai-modal-close" id="aiModalClose">&times;</span>
-                <h2 class="ai-modal-title" data-i18n="ai_summary_title">&#x2728; AI Review Summary</h2>
+        <div id="aiSummaryModal" class="ai-summary-modal">
+            <div class="ai-summary-modal__content">
+                <span class="ai-summary-modal__close-btn" id="aiModalClose">&times;</span>
+                <h2 class="ai-summary-modal__title" data-i18n="ai_summary_title">&#x2728; AI Review Summary</h2>
                 <div id="aiModalBody">
                     <!-- Content injected here -->
                 </div>
@@ -18,19 +18,19 @@ document.addEventListener('DOMContentLoaded', () => {
     const modalBody = document.getElementById('aiModalBody');
 
     closeBtn.addEventListener('click', () => {
-        modal.classList.remove('show');
+        modal.classList.remove('ai-summary-modal--show');
     });
 
     modal.addEventListener('click', (e) => {
-        if (e.target === modal) modal.classList.remove('show');
+        if (e.target === modal) modal.classList.remove('ai-summary-modal--show');
     });
 
     // Make fetch function available globally
     window.openAISummary = async (appId) => {
-        modal.classList.add('show');
+        modal.classList.add('ai-summary-modal--show');
         modalBody.innerHTML = `
-            <div class="ai-loading-container">
-                <div class="ai-loading-spinner"></div>
+            <div class="ai-summary-modal__loading-container">
+                <div class="ai-summary-modal__spinner"></div>
                 <p data-i18n="ai_loading">Analyzing thousands of reviews with Groq AI...</p>
             </div>
         `;
@@ -53,8 +53,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 let inPros = false;
                 let inCons = false;
 
-                let prosHtml = '<ul class="ai-pro-list">';
-                let consHtml = '<ul class="ai-con-list">';
+                let prosHtml = '<ul class="ai-summary-modal__pro-list">';
+                let consHtml = '<ul class="ai-summary-modal__con-list">';
                 let generalHtml = '';
 
                 lines.forEach(line => {
@@ -89,14 +89,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 htmlContent = `<p data-i18n="ai_error">No summary available.</p>`;
             }
 
-            htmlContent += `<div class="ai-source">Source: ${sourceText}</div>`;
+            htmlContent += `<div class="ai-summary-modal__source">Source: ${sourceText}</div>`;
 
             modalBody.innerHTML = htmlContent;
             if (typeof applyLanguage === 'function') applyLanguage();
 
         } catch (error) {
             console.error('AI Summary Error:', error);
-            modalBody.innerHTML = `<div class="error-card"><h3 data-i18n="ai_error">Error loading summary</h3></div>`;
+            modalBody.innerHTML = `<div class="error-card"><h3 class="error-card__title" data-i18n="ai_error">Error loading summary</h3></div>`;
             if (typeof applyLanguage === 'function') applyLanguage();
         }
     };

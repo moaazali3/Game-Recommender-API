@@ -55,15 +55,15 @@ document.addEventListener('DOMContentLoaded', () => {
             card.className = 'game-card';
             
             card.innerHTML = `
-                <div class="card-image-container">
-                    <img src="${getSteamImage(id)}" alt="${name}" class="card-image" onerror="this.src='https://via.placeholder.com/460x215/1a1a1c/ffffff?text=No+Cover';">
+                <div class="game-card__image-container">
+                    <img src="${getSteamImage(id)}" alt="${name}" class="game-card__image" onerror="this.src='https://via.placeholder.com/460x215/1a1a1c/ffffff?text=No+Cover';">
                 </div>
-                <div class="card-content">
-                    <h3 class="card-title">${name}</h3>
-                    <div class="card-actions">
-                        <button class="action-btn ai-summary-btn" onclick="event.stopPropagation(); window.openAISummary('${id}')" data-i18n="ai_summary_btn">✨ AI Summary</button>
-                        <a href="https://store.steampowered.com/app/${id}" target="_blank" class="action-btn steam-btn" onclick="event.stopPropagation()" data-i18n="view_steam">View on Steam</a>
-                        <button class="action-btn similar-btn" onclick="window.location.href='index.html?search=${encodeURIComponent(name)}'" data-i18n="find_similar">Find Similar</button>
+                <div class="game-card__content">
+                    <h3 class="game-card__title">${name}</h3>
+                    <div class="game-card__actions">
+                        <button class="game-card__btn game-card__btn--ai-summary" onclick="event.stopPropagation(); window.openAISummary('${id}')" data-i18n="ai_summary_btn">✨ AI Summary</button>
+                        <a href="https://store.steampowered.com/app/${id}" target="_blank" class="game-card__btn game-card__btn--steam" onclick="event.stopPropagation()" data-i18n="view_steam">View on Steam</a>
+                        <button class="game-card__btn game-card__btn--similar" onclick="window.location.href='index.html?search=${encodeURIComponent(name)}'" data-i18n="find_similar">Find Similar</button>
                     </div>
                 </div>
             `;

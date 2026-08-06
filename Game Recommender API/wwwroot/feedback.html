@@ -22,32 +22,43 @@
     </script>
 </head>
 <body>
-    <div class="background-effects">
-        <div class="glow-orb orb-1"></div>
-        <div class="glow-orb orb-2"></div>
+    <div class="bg-effects">
+        <div class="bg-effects__orb bg-effects__orb--primary"></div>
+        <div class="bg-effects__orb bg-effects__orb--secondary"></div>
     </div>
 
-    <div class="top-nav">
-        <button id="langToggleBtn" class="nav-btn" data-i18n="lang_toggle">🌐 AR</button>
-        <button class="nav-btn" onclick="window.location.href='index.html'" data-i18n="back_to_search">Back to Search</button>
-    </div>
+    <header class="top-nav-bar">
+        <a href="https://ludova.runasp.net/" class="top-nav-brand">
+            <img src="https://ludova.runasp.net/assets/images/logo.png" alt="Ludova Logo" class="top-nav-brand__logo">
+            <span class="top-nav-brand__title">LUDOVA</span>
+            <span class="top-nav-brand__badge">AI Recommender</span>
+        </a>
 
-    <main class="container">
-        <section class="hero" style="margin-top: 8vh; margin-bottom: 2rem;">
-            <p style="color: var(--text-muted); font-size: 1.2rem;" data-i18n="feedback_subtitle">Help us improve the gaming multiverse.</p>
+        <nav class="top-nav">
+            <button class="top-nav__btn" onclick="window.location.href='https://ludova.runasp.net/'" data-i18n="nav_ludova_hub">← Ludova Gateway</button>
+            <button class="top-nav__btn" onclick="window.location.href='index.html'" data-i18n="back_to_search">Back to Search</button>
+            <button class="top-nav__btn" onclick="window.location.href='series.html'" data-i18n="nav_timeline">Series Timeline</button>
+            <button class="top-nav__btn" onclick="window.location.href='library.html'" data-i18n="nav_library">Library</button>
+            <button id="langToggleBtn" class="top-nav__btn" data-i18n="lang_toggle">🌐 AR</button>
+        </nav>
+    </header>
+
+    <main class="app-container">
+        <section class="hero-section" style="margin-top: 8vh; margin-bottom: 2rem;">
+            <p class="hero-section__subtitle" style="color: var(--text-muted); font-size: 1.2rem;" data-i18n="feedback_subtitle">Help us improve the gaming multiverse.</p>
         </section>
 
-        <section class="feedback-section" style="width: 100%; max-width: 600px;">
+        <section class="feedback-form" style="width: 100%; max-width: 600px;">
             <div class="glass-panel" style="padding: 2.5rem;">
                 <form id="feedbackForm">
                     <div style="margin-bottom: 2rem;">
                         <label style="display: block; font-weight: 600; margin-bottom: 0.8rem; color: white;" data-i18n="feedback_rate_label">Rate your experience</label>
-                        <div class="star-rating" id="starRating">
-                            <span data-value="1">★</span>
-                            <span data-value="2">★</span>
-                            <span data-value="3">★</span>
-                            <span data-value="4">★</span>
-                            <span data-value="5" class="active">★</span>
+                        <div class="feedback-form__rating" id="starRating">
+                            <span class="feedback-form__star" data-value="1">★</span>
+                            <span class="feedback-form__star" data-value="2">★</span>
+                            <span class="feedback-form__star" data-value="3">★</span>
+                            <span class="feedback-form__star" data-value="4">★</span>
+                            <span class="feedback-form__star feedback-form__star--active" data-value="5">★</span>
                         </div>
                         <input type="hidden" id="ratingValue" value="5">
                     </div>
@@ -67,8 +78,8 @@
                 </div>
                 
                 <div id="feedbackError" class="hidden error-card" style="margin-top: 1rem; padding: 1.5rem;">
-                    <h3 style="font-size: 1.2rem; margin-bottom: 0.5rem;" data-i18n="feedback_error_title">Error</h3>
-                    <p data-i18n="feedback_error_desc">Failed to submit feedback. Please try again.</p>
+                    <h3 class="error-card__title" style="font-size: 1.2rem; margin-bottom: 0.5rem;" data-i18n="feedback_error_title">Error</h3>
+                    <p class="error-card__description" data-i18n="feedback_error_desc">Failed to submit feedback. Please try again.</p>
                 </div>
             </div>
         </section>

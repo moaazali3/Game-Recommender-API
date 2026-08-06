@@ -7,48 +7,59 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="bg-elements">
-        <div class="glow-orb orb-1"></div>
-        <div class="glow-orb orb-2"></div>
+    <div class="bg-effects">
+        <div class="bg-effects__orb bg-effects__orb--primary"></div>
+        <div class="bg-effects__orb bg-effects__orb--secondary"></div>
     </div>
 
-    <div class="top-nav">
-        <button id="langToggleBtn" class="nav-btn" data-i18n="lang_toggle">🌐 AR</button>
-        <button class="nav-btn" onclick="window.location.href='index.html'" data-i18n="back_to_search">Back to Search</button>
-    </div>
+    <header class="top-nav-bar">
+        <a href="https://ludova.runasp.net/" class="top-nav-brand">
+            <img src="https://ludova.runasp.net/assets/images/logo.png" alt="Ludova Logo" class="top-nav-brand__logo">
+            <span class="top-nav-brand__title">LUDOVA</span>
+            <span class="top-nav-brand__badge">AI Recommender</span>
+        </a>
 
-    <main class="container">
-        <section class="hero" style="min-height: 20vh; padding: 2rem 1rem;">
-            <h1 data-i18n="library_title">All Games Library</h1>
-            <p style="color: var(--text-muted); font-size: 1.2rem; margin-top: 1rem;" data-i18n="library_desc">Explore all games available in our database.</p>
+        <nav class="top-nav">
+            <button class="top-nav__btn" onclick="window.location.href='https://ludova.runasp.net/'" data-i18n="nav_ludova_hub">← Ludova Gateway</button>
+            <button class="top-nav__btn" onclick="window.location.href='index.html'" data-i18n="back_to_search">Back to Search</button>
+            <button class="top-nav__btn" onclick="window.location.href='series.html'" data-i18n="nav_timeline">Series Timeline</button>
+            <button class="top-nav__btn" onclick="window.location.href='feedback.html'" data-i18n="nav_feedback">Feedback</button>
+            <button id="langToggleBtn" class="top-nav__btn" data-i18n="lang_toggle">🌐 AR</button>
+        </nav>
+    </header>
+
+    <main class="app-container">
+        <section class="hero-section" style="min-height: 20vh; padding: 2rem 1rem;">
+            <h1 class="hero-section__title" data-i18n="library_title">All Games Library</h1>
+            <p class="hero-section__subtitle" style="color: var(--text-muted); font-size: 1.2rem; margin-top: 1rem;" data-i18n="library_desc">Explore all games available in our database.</p>
             <div style="margin-top: 2rem;">
                 <span data-i18n="total_games" style="font-size: 1.1rem; color: #fff;">Total Saved Games:</span>
                 <span id="totalGamesCount" style="color: var(--accent); font-weight: bold; font-size: 1.2rem;">0</span>
             </div>
             
-            <div class="search-wrapper" style="margin-top: 2rem; width: 100%; max-width: 600px; margin-left: auto; margin-right: auto;">
-                <div class="search-container">
-                    <input type="text" id="librarySearchInput" placeholder="Filter games by name..." data-i18n="search_placeholder" autocomplete="off">
+            <div class="search-bar" style="margin-top: 2rem; width: 100%; max-width: 600px; margin-left: auto; margin-right: auto;">
+                <div class="search-bar__container">
+                    <input type="text" id="librarySearchInput" class="search-bar__input" placeholder="Filter games by name..." data-i18n="search_placeholder" autocomplete="off">
                 </div>
             </div>
         </section>
 
         <section id="libraryLoadingState" class="hidden" style="margin-top: 3rem;">
             <div class="loader">
-                <div class="pulse"></div>
+                <div class="loader__pulse"></div>
             </div>
             <p data-i18n="loading_text">Scanning the gaming multiverse...</p>
         </section>
 
         <section id="libraryErrorState" class="hidden" style="margin-top: 3rem;">
             <div class="error-card">
-                <h2 data-i18n="error_title">Failed to load library</h2>
-                <p data-i18n="error_desc">There was a problem fetching the games.</p>
+                <h2 class="error-card__title" data-i18n="error_title">Failed to load library</h2>
+                <p class="error-card__description" data-i18n="error_desc">There was a problem fetching the games.</p>
             </div>
         </section>
 
         <section id="librarySection" class="hidden" style="width: 100%;">
-            <div id="libraryGrid" class="recommendations-grid" style="margin-top: 2rem;">
+            <div id="libraryGrid" class="recommendations-section__grid" style="margin-top: 2rem;">
                 <!-- Games injected here via JS -->
             </div>
         </section>

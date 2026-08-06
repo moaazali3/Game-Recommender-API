@@ -29,9 +29,9 @@ document.addEventListener('DOMContentLoaded', () => {
         timelineSeriesTitle.removeAttribute('data-i18n');
         const isAr = (typeof currentLang !== 'undefined' ? currentLang : 'en') === 'ar';
         if (isAr) {
-            timelineSeriesTitle.innerHTML = `التسلسل الزمني لـ <span class="highlight">${seriesName}</span>`;
+            timelineSeriesTitle.innerHTML = `التسلسل الزمني لـ <span class="hero-section__highlight">${seriesName}</span>`;
         } else {
-            timelineSeriesTitle.innerHTML = `<span class="highlight">${seriesName}</span> Timeline`;
+            timelineSeriesTitle.innerHTML = `<span class="hero-section__highlight">${seriesName}</span> Timeline`;
         }
     }
 
@@ -94,7 +94,7 @@ document.addEventListener('DOMContentLoaded', () => {
             seriesAutocompleteDropdown.innerHTML = '';
             suggestions.forEach(s => {
                 const item = document.createElement('div');
-                item.className = 'autocomplete-item';
+                item.className = 'search-bar__dropdown-item';
                 item.textContent = s.name || s.Name;
                 item.addEventListener('click', () => {
                     seriesAutocompleteDropdown.classList.add('hidden');
@@ -121,7 +121,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (e.key === 'Enter') {
                 e.preventDefault();
                 // Optionally select the first item if dropdown is open and has items
-                const firstItem = seriesAutocompleteDropdown.querySelector('.autocomplete-item');
+                const firstItem = seriesAutocompleteDropdown.querySelector('.search-bar__dropdown-item');
                 if (firstItem && !seriesAutocompleteDropdown.classList.contains('hidden')) {
                     firstItem.click();
                 }
@@ -155,7 +155,7 @@ document.addEventListener('DOMContentLoaded', () => {
         
         activeSeriesName = nameFallback;
         updateTimelineTitle(activeSeriesName);
-
+ 
         fetchTimelineData(id, true);
     }
 
@@ -200,7 +200,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const delay = index * 0.1; // staggered animation
             
             const isMainline = game.isMainline;
-            const badgeClass = isMainline ? 'badge-mainline' : 'badge-spinoff';
+            const badgeClass = isMainline ? 'timeline__badge--mainline' : 'timeline__badge--spinoff';
             const badgeI18nKey = isMainline ? 'mainline' : 'spinoff';
             const badgeText = isMainline ? 'Mainline' : 'Spin-off';
             
@@ -221,14 +221,14 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             const itemHTML = `
-                <div class="timeline-item" style="animation-delay: ${delay}s">
-                    <div class="timeline-marker">${index + 1}</div>
-                    <div class="timeline-card">
-                        <img src="${coverUrl}" alt="${game.title}" class="timeline-img" onerror="this.src='https://via.placeholder.com/120x80/1a1a1c/ffffff?text=No+Cover';">
-                        <div class="timeline-content">
-                            <h4 class="timeline-title">${game.title}</h4>
-                            <span class="timeline-date">${dateStr}</span>
-                            <span class="mainline-badge ${badgeClass}" data-i18n="${badgeI18nKey}">${badgeText}</span>
+                <div class="timeline__item" style="animation-delay: ${delay}s">
+                    <div class="timeline__marker">${index + 1}</div>
+                    <div class="timeline__card">
+                        <img src="${coverUrl}" alt="${game.title}" class="timeline__image" onerror="this.src='https://via.placeholder.com/120x80/1a1a1c/ffffff?text=No+Cover';">
+                        <div class="timeline__content">
+                            <h4 class="timeline__title">${game.title}</h4>
+                            <span class="timeline__date">${dateStr}</span>
+                            <span class="${badgeClass}" data-i18n="${badgeI18nKey}">${badgeText}</span>
                         </div>
                     </div>
                 </div>

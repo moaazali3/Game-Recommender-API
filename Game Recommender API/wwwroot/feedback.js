@@ -46,11 +46,11 @@ document.addEventListener('DOMContentLoaded', () => {
         stars.forEach(s => {
             const starVal = parseInt(s.getAttribute('data-value'));
             if (starVal <= val) {
-                s.classList.add('active');
+                s.classList.add('feedback-form__star--active');
                 s.style.color = ''; // reset inline styles to rely on CSS
                 s.style.textShadow = '';
             } else {
-                s.classList.remove('active');
+                s.classList.remove('feedback-form__star--active');
                 s.style.color = 'rgba(255, 255, 255, 0.1)';
                 s.style.textShadow = 'none';
             }

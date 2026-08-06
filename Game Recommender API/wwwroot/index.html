@@ -24,43 +24,52 @@
 </head>
 
 <body>
-    <div class="background-effects">
-        <div class="glow-orb orb-1"></div>
-        <div class="glow-orb orb-2"></div>
+    <div class="bg-effects">
+        <div class="bg-effects__orb bg-effects__orb--primary"></div>
+        <div class="bg-effects__orb bg-effects__orb--secondary"></div>
     </div>
 
-    <div class="top-nav">
-        <button id="langToggleBtn" class="nav-btn" data-i18n="lang_toggle">🌐 AR</button>
-        <button id="timelineBtn" class="nav-btn" onclick="window.location.href='series.html'" data-i18n="nav_timeline">View Series Timeline</button>
-        <button id="libraryBtn" class="nav-btn" onclick="window.location.href='library.html'" data-i18n="nav_library">Library</button>
-        <button class="nav-btn" onclick="window.location.href='feedback.html'" data-i18n="nav_feedback">Feedback</button>
-        <button id="aboutBtn" class="nav-btn" data-i18n="nav_about">About Site</button>
-    </div>
+    <header class="top-nav-bar">
+        <a href="https://ludova.runasp.net/" class="top-nav-brand">
+            <img src="https://ludova.runasp.net/assets/images/logo.png" alt="Ludova Logo" class="top-nav-brand__logo">
+            <span class="top-nav-brand__title">LUDOVA</span>
+            <span class="top-nav-brand__badge">AI Recommender</span>
+        </a>
 
-    <main class="container">
-        <section class="hero">
-            <h1 data-i18n="hero_title">Discover Your Next <span class="highlight">Favorite Game</span></h1>
+        <nav class="top-nav">
+            <button class="top-nav__btn" onclick="window.location.href='https://ludova.runasp.net/'" data-i18n="nav_ludova_hub">← Ludova Gateway</button>
+            <button id="timelineBtn" class="top-nav__btn" onclick="window.location.href='series.html'" data-i18n="nav_timeline">View Series Timeline</button>
+            <button id="libraryBtn" class="top-nav__btn" onclick="window.location.href='library.html'" data-i18n="nav_library">Library</button>
+            <button class="top-nav__btn" onclick="window.location.href='feedback.html'" data-i18n="nav_feedback">Feedback</button>
+            <button id="aboutBtn" class="top-nav__btn" data-i18n="nav_about">About Site</button>
+            <button id="langToggleBtn" class="top-nav__btn" data-i18n="lang_toggle">🌐 AR</button>
+        </nav>
+    </header>
 
-            <div class="search-wrapper">
-                <div class="search-container">
-                    <input type="text" id="searchInput" placeholder="Enter Game Name (e.g., Dark Souls III)" data-i18n="search_placeholder" autocomplete="off">
-                    <button id="searchBtn" class="embedded-search-btn" data-i18n="search_btn">Search</button>
-                    <div id="autocompleteDropdown" class="autocomplete-dropdown hidden"></div>
+    <main class="app-container">
+        <section class="hero-section">
+            <h1 class="hero-section__title" data-i18n="hero_title">Discover Your Next <span class="hero-section__highlight">Favorite Game</span></h1>
+
+            <div class="search-bar">
+                <div class="search-bar__container">
+                    <input type="text" id="searchInput" class="search-bar__input" placeholder="Enter Game Name (e.g., Dark Souls III)" data-i18n="search_placeholder" autocomplete="off">
+                    <button id="searchBtn" class="search-bar__btn" data-i18n="search_btn">Search</button>
+                    <div id="autocompleteDropdown" class="search-bar__dropdown hidden"></div>
                 </div>
             </div>
         </section>
 
         <section id="loadingState" class="hidden">
             <div class="loader">
-                <div class="pulse"></div>
+                <div class="loader__pulse"></div>
             </div>
             <p data-i18n="loading_text">Scanning the gaming multiverse...</p>
         </section>
 
         <section id="errorState" class="hidden">
             <div class="error-card">
-                <h2 data-i18n="error_title">Game not found</h2>
-                <p data-i18n="error_desc">We couldn't find any recommendations for that game. Try another title or Steam ID.</p>
+                <h2 class="error-card__title" data-i18n="error_title">Game not found</h2>
+                <p class="error-card__description" data-i18n="error_desc">We couldn't find any recommendations for that game. Try another title or Steam ID.</p>
             </div>
         </section>
 
@@ -69,40 +78,40 @@
                 <!-- Injected via JS -->
             </div>
 
-            <h3 class="recommendations-title" data-i18n="top_recommendations">Top Recommendations</h3>
-            <div id="recommendationsGrid" class="recommendations-grid">
+            <h3 class="recommendations-section__title" data-i18n="top_recommendations">Top Recommendations</h3>
+            <div id="recommendationsGrid" class="recommendations-section__grid">
                 <!-- Injected via JS -->
             </div>
         </section>
     </main>
 
     <!-- Info Modal -->
-    <div id="infoModal" class="modal">
-        <div class="modal-content">
-            <span class="close-btn" id="closeModalBtn">&times;</span>
-            <h2 data-i18n="about_title">About Game Recommender</h2>
-            <p data-i18n="about_desc">Welcome to the Game Recommender! Search for a game you love, and we will find similar games for you using
+    <div id="infoModal" class="modal-window">
+        <div class="modal-window__content">
+            <span class="modal-window__close-btn" id="closeModalBtn">&times;</span>
+            <h2 class="modal-window__title" data-i18n="about_title">About Game Recommender</h2>
+            <p class="modal-window__description" data-i18n="about_desc">Welcome to the Game Recommender! Search for a game you love, and we will find similar games for you using
                 Steam data. The <span style="color: var(--accent); font-weight: bold;">Match</span> score indicates how
                 similar a recommended game is to your search.</p>
 
-            <div class="developer-info">
-                <p data-i18n="about_dev">Designed & Developed by <br><span class="highlight"
+            <div class="modal-window__developer-info">
+                <p class="modal-window__developer-info-text" data-i18n="about_dev">Designed & Developed by <br><span class="hero-section__highlight"
                         style="font-size: 1.5rem; font-weight: 800; margin-top: 0.5rem; display: inline-block;">Moaaz
                         Ali Ali</span></p>
-                <div class="social-links">
-                    <a href="https://github.com/moaazali3" target="_blank" title="GitHub">
+                <div class="modal-window__social-links">
+                    <a href="https://github.com/moaazali3" target="_blank" class="modal-window__social-link" title="GitHub">
                         <svg viewBox="0 0 24 24">
                             <path
                                 d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z" />
                         </svg>
                     </a>
-                    <a href="https://www.linkedin.com/in/moaaz-ali-ali/" target="_blank" title="LinkedIn">
+                    <a href="https://www.linkedin.com/in/moaaz-ali-ali/" target="_blank" class="modal-window__social-link" title="LinkedIn">
                         <svg viewBox="0 0 24 24">
                             <path
                                 d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z" />
                         </svg>
                     </a>
-                    <a href="https://www.facebook.com/moaaz.aliali.18/" target="_blank" title="Facebook">
+                    <a href="https://www.facebook.com/moaaz.aliali.18/" target="_blank" class="modal-window__social-link" title="Facebook">
                         <svg viewBox="0 0 24 24">
                             <path
                                 d="M9 8h-3v4h3v12h5v-12h3.642l.358-4h-4v-1.667c0-.955.192-1.333 1.115-1.333h2.885v-5h-3.808c-3.596 0-5.192 1.583-5.192 4.615v3.385z" />
