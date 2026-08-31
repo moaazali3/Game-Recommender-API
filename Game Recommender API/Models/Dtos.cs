@@ -1,4 +1,4 @@
-﻿namespace Game_Recommender_API.Models
+namespace Game_Recommender_API.Models
 {
     public class Dtos
     {
@@ -12,7 +12,11 @@
     }
     public class FeedbackInputDto
     {
-        public string Message { get; set; }
+        public string Message { get; set; } = string.Empty;
         public int? Rating { get; set; } 
+    }
+    public class BlendRequestDto
+    {
+        public List<string> Games { get; set; } = new();
     }
 }

@@ -42,45 +42,78 @@ namespace Game_Recommender_API.Controllers
             });
         }
         [HttpPost("seed")]
-        public async Task<IActionResult> getgamesinfo()
+        public async Task<IActionResult> getgamesinfo([FromQuery] int page = 1)
         {
+            Console.WriteLine($"[SEED START] بدء عملية سحب الألعاب وتحليلها للصفحة {page}...");
             var result = await _steamService.Gettop1000game();
-            int currentIndex = 1;
+            int currentIndex = 0;
+            int addedInBatch = 0;
+            int totalNewAdded = 0;
             int totalGames = result.Count;
+
             foreach (var game in result)
             {
+                currentIndex++;
                 string currappid = game.Key;
                 string currappname = game.Value;
-                Console.WriteLine($" جاري المعالجة ({currentIndex}/{totalGames}): {currappname}...");
+
                 if (_dbContext.Games.Any(g => g.Appid == currappid))
                 {
+                    Console.WriteLine($"[SKIP] ({currentIndex}/{totalGames}) تخطي '{currappname}' (موجودة مسبقاً).");
                     continue;
                 }
-                var review = await _steamService.GetGameReviewsAsync(currappid);
 
+                Console.WriteLine($"[PROCESSING] ({currentIndex}/{totalGames}) جاري سحب وتحليل: {currappname} (ID: {currappid})...");
+
+                var review = await _steamService.GetGameReviewsAsync(currappid);
                 if (review == null || review.Count == 0)
                 {
                     continue;
                 }
+
                 var keywordslist = _textAnalyzer.ExtractTopKeywords(review, 15);
                 string keywordstring = string.Join(",", keywordslist);
+
+                var tagsList = await _steamService.GetTagsForGame(currappid);
+                string tagstring = string.Join(",", tagsList);
 
                 var newgame = new Models.Game
                 {
                     Appid = currappid,
                     Name = currappname,
                     keywords = keywordstring,
-                    LastUpdated = DateTime.Now,
-
-
+                    Tags = tagstring,
+                    LastUpdated = DateTime.Now
                 };
-                _dbContext.Games.Add(newgame);
-                currentIndex++;
-                await Task.Delay(2000);
 
+                _dbContext.Games.Add(newgame);
+                addedInBatch++;
+                totalNewAdded++;
+
+                // حفظ الدفعة في الداتابيز كل 100 لعبة لحماية التقدم
+                if (addedInBatch >= 100)
+                {
+                    await _dbContext.SaveChangesAsync();
+                    Console.WriteLine($"[BATCH SAVED] ✅ تم حفظ دفعة من {addedInBatch} لعبة في قاعدة البيانات بنجاح! (إجمالي المضاف حتى الآن: {totalNewAdded})");
+                    addedInBatch = 0;
+                }
+
+                await Task.Delay(1000);
             }
-            await _dbContext.SaveChangesAsync();
-            return Ok("تم سحب الألعاب وتحليلها وحفظها في قاعدة البيانات بنجاح!");
+
+            if (addedInBatch > 0)
+            {
+                await _dbContext.SaveChangesAsync();
+                Console.WriteLine($"[FINAL SAVED] ✅ تم حفظ آخر {addedInBatch} لعبة بنجاح!");
+            }
+
+            Console.WriteLine($"[SEED COMPLETE] انتهت العملية بنجاح. تم إضافة {totalNewAdded} لعبة جديدة إلى قاعدة البيانات.");
+            return Ok(new
+            {
+                Message = "تم سحب الألعاب وتحليلها وحفظها في قاعدة البيانات بنجاح!",
+                TotalNewAdded = totalNewAdded,
+                TotalProcessed = currentIndex
+            });
         }
         [HttpPost("add-game/{appid}")]
         public async Task<IActionResult> addgame(string appid)
@@ -166,6 +199,15 @@ namespace Game_Recommender_API.Controllers
                 TotalUpdated = updatedCount
             });
         }
+        [HttpGet("feedback")]
+        public async Task<IActionResult> GetFeedbacks()
+        {
+            var feedbacks = await _dbContext.Feedbacks
+                .OrderByDescending(f => f.dateTime)
+                .Take(50)
+                .ToListAsync();
+            return Ok(feedbacks);
+        }
         [HttpPost("feedback")]
         public async Task<IActionResult> addfeedback([FromBody] FeedbackInputDto input)
         {
@@ -184,28 +226,80 @@ namespace Game_Recommender_API.Controllers
             _dbContext.Feedbacks.Add(newinput);
             await _dbContext.SaveChangesAsync();
             return Ok(newinput);
-}
+        }
+        private static readonly Dictionary<string, string> GameAliases = new(StringComparer.OrdinalIgnoreCase)
+        {
+            { "gta", "Grand Theft Auto" },
+            { "gta v", "Grand Theft Auto V" },
+            { "gta 5", "Grand Theft Auto V" },
+            { "gta iv", "Grand Theft Auto IV" },
+            { "gta 4", "Grand Theft Auto IV" },
+            { "gta sa", "Grand Theft Auto: San Andreas" },
+            { "rdr", "Red Dead Redemption" },
+            { "rdr2", "Red Dead Redemption 2" },
+            { "rdr 2", "Red Dead Redemption 2" },
+            { "gow", "God of War" },
+            { "ds1", "Dark Souls" },
+            { "ds2", "Dark Souls II" },
+            { "ds3", "Dark Souls III" },
+            { "re", "Resident Evil" },
+            { "re2", "Resident Evil 2" },
+            { "re3", "Resident Evil 3" },
+            { "re4", "Resident Evil 4" },
+            { "re7", "Resident Evil 7" },
+            { "re8", "Resident Evil Village" },
+            { "ac", "Assassin's Creed" },
+            { "cod", "Call of Duty" },
+            { "dmc", "Devil May Cry" },
+            { "mgs", "Metal Gear Solid" },
+            { "cp2077", "Cyberpunk 2077" },
+            { "cyberpunk", "Cyberpunk 2077" },
+            { "csgo", "Counter-Strike" },
+            { "cs2", "Counter-Strike 2" },
+            { "tf2", "Team Fortress 2" },
+            { "botw", "Zelda" },
+            { "totk", "Zelda" },
+            { "ff", "Final Fantasy" },
+            { "ff7", "Final Fantasy VII" },
+            { "ff14", "Final Fantasy XIV" },
+            { "ff15", "Final Fantasy XV" },
+            { "ff16", "Final Fantasy XVI" },
+            { "tes", "The Elder Scrolls" },
+            { "tesv", "Skyrim" },
+            { "skyrim", "The Elder Scrolls V: Skyrim" },
+            { "fallout nv", "Fallout: New Vegas" },
+            { "fonv", "Fallout: New Vegas" },
+            { "fo4", "Fallout 4" },
+            { "bg3", "Baldur's Gate 3" },
+            { "hl", "Half-Life" },
+            { "hl2", "Half-Life 2" },
+            { "er", "Elden Ring" }
+        };
+
         [HttpGet("autocomplete")]
         public async Task<IActionResult> Autocomplete([FromQuery] string q)
         {
-            if (string.IsNullOrWhiteSpace(q) || q.Length < 2)
+            if (string.IsNullOrWhiteSpace(q) || q.Trim().Length < 1)
             {
                 return Ok(new List<object>());
             }
+
+            string cleanQ = q.Trim();
+            string expandedQ = GameAliases.TryGetValue(cleanQ, out var aliasTarget) ? aliasTarget : cleanQ;
 
             var nsfwTags = new List<string> { "nsfw", "sexual content", "hentai"};
 
             try
             {
                 var allMatches = await _dbContext.Games
-                    .Where(g => g.Name != null && EF.Functions.Like(g.Name, $"%{q}%"))
-                    .Take(20)
+                    .Where(g => g.Name != null && (EF.Functions.Like(g.Name, $"%{cleanQ}%") || EF.Functions.Like(g.Name, $"%{expandedQ}%")))
+                    .Take(25)
                     .ToListAsync();
                 
                 var suggestions = allMatches
                     .Where(g => string.IsNullOrEmpty(g.Tags) || !nsfwTags.Any(badTag => g.Tags.ToLower().Contains(badTag)))
                     .Select(g => new { appid = g.Appid, name = g.Name })
-                    .Take(5)
+                    .Take(7)
                     .ToList();
 
                 return Ok(suggestions);
@@ -218,7 +312,6 @@ namespace Game_Recommender_API.Controllers
         [HttpGet("all")]
         public async Task<IActionResult> GetAllGames()
         {
-            
             var games = await _dbContext.Games
                 .Select(g => new { g.Appid, g.Name })
                 .ToListAsync();
@@ -232,7 +325,13 @@ namespace Game_Recommender_API.Controllers
         [HttpGet("{appid}/recommendations")]
         public async Task<IActionResult> getrecommedations(string appid)
         {
-            var targetgame = await _dbContext.Games.FirstOrDefaultAsync(g => g.Appid == appid || (g.Name != null && g.Name.ToLower().Contains(appid.ToLower())));
+            string cleanAppId = appid.Trim();
+            string expandedName = GameAliases.TryGetValue(cleanAppId, out var aliasTarget) ? aliasTarget : cleanAppId;
+
+            var targetgame = await _dbContext.Games.FirstOrDefaultAsync(g => 
+                g.Appid == cleanAppId || 
+                (g.Name != null && (g.Name.ToLower() == cleanAppId.ToLower() || g.Name.ToLower() == expandedName.ToLower() || g.Name.ToLower().Contains(cleanAppId.ToLower()) || g.Name.ToLower().Contains(expandedName.ToLower()))));
+            
             if (targetgame == null)
                 return NotFound(new { message = "مش موجوده" });
 
@@ -294,7 +393,6 @@ namespace Game_Recommender_API.Controllers
             .Take(10)
             .ToList();
 
-       
             var top10AppIds = top10Games.Select(g => g.Appid).ToList();
             var seriesData = await _dbContext.SeriesGames
                     .Where(s => s.SteamId != null && top10AppIds.Contains(s.SteamId))
@@ -308,7 +406,6 @@ namespace Game_Recommender_API.Controllers
                 Sharedkeywords = game.Sharedkeywords,
                 Tags = game.Tags,
                 IsMature = game.IsMature,
-             
                 hasseries = seriesData.ContainsKey(game.Appid),
                 seriesid = seriesData.ContainsKey(game.Appid) ? seriesData[game.Appid] : (int?)null
             }).ToList();
@@ -322,6 +419,126 @@ namespace Game_Recommender_API.Controllers
                 SeriesId = targetseriesid
             });
         }
+
+        [HttpPost("blend")]
+        public async Task<IActionResult> BlendRecommendations([FromBody] BlendRequestDto request)
+        {
+            if (request == null || request.Games == null || request.Games.Count == 0)
+            {
+                return BadRequest(new { message = "يجب تحديد لعبة واحدة على الأقل لخلط الترشيحات." });
+            }
+
+            var targetGames = new List<Models.Game>();
+            foreach (var gameInput in request.Games.Take(4))
+            {
+                string clean = gameInput.Trim();
+                string expanded = GameAliases.TryGetValue(clean, out var aliased) ? aliased : clean;
+
+                var g = await _dbContext.Games.FirstOrDefaultAsync(x =>
+                    x.Appid == clean ||
+                    (x.Name != null && (x.Name.ToLower() == clean.ToLower() || x.Name.ToLower() == expanded.ToLower() || x.Name.ToLower().Contains(clean.ToLower()) || x.Name.ToLower().Contains(expanded.ToLower()))));
+
+                if (g != null && !targetGames.Any(existing => existing.Appid == g.Appid))
+                {
+                    targetGames.Add(g);
+                }
+            }
+
+            if (targetGames.Count == 0)
+            {
+                return NotFound(new { message = "لم يتم العثور على أي من الألعاب المحددة في قاعدة البيانات." });
+            }
+
+            var targetAppIds = targetGames.Select(g => g.Appid).ToHashSet();
+            var allKeywords = targetGames
+                .SelectMany(g => (g.keywords ?? string.Empty).Split(',', StringSplitOptions.RemoveEmptyEntries).Select(k => k.Trim()))
+                .Distinct(StringComparer.OrdinalIgnoreCase)
+                .ToList();
+
+            var allTags = targetGames
+                .SelectMany(g => (g.Tags ?? string.Empty).Split(',', StringSplitOptions.RemoveEmptyEntries).Select(t => t.Trim()))
+                .Distinct(StringComparer.OrdinalIgnoreCase)
+                .ToList();
+
+            var matureTags = new List<string> { "nudity", "sexual content" };
+            var hardBannedTags = new List<string> { "hentai", "nsfw", "adult only" };
+            var mainstreamTags = new List<string> { "rpg", "action", "adventure", "shooter", "open world", "strategy", "sports", "story rich", "simulation" };
+
+            var candidates = await _dbContext.Games
+                .Where(g => !targetAppIds.Contains(g.Appid))
+                .ToListAsync();
+
+            var filteredCandidates = candidates.Where(g =>
+            {
+                if (string.IsNullOrEmpty(g.Tags)) return true;
+                var gameTagsList = g.Tags.ToLower().Split(',').Select(t => t.Trim()).ToList();
+                if (gameTagsList.Any(tag => hardBannedTags.Contains(tag))) return false;
+
+                bool hasMature = gameTagsList.Any(tag => matureTags.Contains(tag));
+                if (hasMature && !gameTagsList.Any(tag => mainstreamTags.Contains(tag))) return false;
+
+                return true;
+            }).ToList();
+
+            var top12Blended = filteredCandidates.Select(game =>
+            {
+                var gameKeywords = (game.keywords ?? string.Empty).Split(',', StringSplitOptions.RemoveEmptyEntries).Select(k => k.Trim()).ToList();
+                var gameTags = (game.Tags ?? string.Empty).Split(',', StringSplitOptions.RemoveEmptyEntries).Select(t => t.Trim()).ToList();
+                bool isMature = gameTags.Any(tag => matureTags.Contains(tag.ToLower()));
+
+                int keywordMatches = gameKeywords.Intersect(allKeywords, StringComparer.OrdinalIgnoreCase).Count();
+                int tagMatches = gameTags.Intersect(allTags, StringComparer.OrdinalIgnoreCase).Count();
+
+                int crossGameMatches = targetGames.Count(tg =>
+                {
+                    var tgKw = (tg.keywords ?? string.Empty).Split(',', StringSplitOptions.RemoveEmptyEntries);
+                    var tgTg = (tg.Tags ?? string.Empty).Split(',', StringSplitOptions.RemoveEmptyEntries);
+                    return gameKeywords.Intersect(tgKw, StringComparer.OrdinalIgnoreCase).Any() ||
+                           gameTags.Intersect(tgTg, StringComparer.OrdinalIgnoreCase).Any();
+                });
+
+                int finalScore = keywordMatches + (tagMatches * 5) + (crossGameMatches * 15);
+
+                return new
+                {
+                    Appid = game.Appid,
+                    Name = game.Name,
+                    matchscore = finalScore,
+                    Sharedkeywords = gameKeywords.Intersect(allKeywords, StringComparer.OrdinalIgnoreCase),
+                    Tags = gameTags,
+                    IsMature = isMature,
+                    CrossGameMatches = crossGameMatches
+                };
+            })
+            .Where(x => x.matchscore > 0)
+            .OrderByDescending(x => x.matchscore)
+            .Take(12)
+            .ToList();
+
+            var topAppIds = top12Blended.Select(g => g.Appid).ToList();
+            var seriesData = await _dbContext.SeriesGames
+                .Where(s => s.SteamId != null && topAppIds.Contains(s.SteamId))
+                .ToDictionaryAsync(s => s.SteamId!, s => s.SeriesId);
+
+            var recommend = top12Blended.Select(game => new
+            {
+                Appid = game.Appid,
+                Name = game.Name,
+                matchscore = game.matchscore,
+                Sharedkeywords = game.Sharedkeywords,
+                Tags = game.Tags,
+                IsMature = game.IsMature,
+                hasseries = seriesData.ContainsKey(game.Appid),
+                seriesid = seriesData.ContainsKey(game.Appid) ? seriesData[game.Appid] : (int?)null
+            }).ToList();
+
+            return Ok(new
+            {
+                TargetGames = targetGames.Select(g => new { Appid = g.Appid, Name = g.Name }).ToList(),
+                Recommendations = recommend
+            });
+        }
+
         [HttpPost("patch-existing-tags")]
         public async Task<IActionResult> PatchTags() 
         {
@@ -335,7 +552,6 @@ namespace Game_Recommender_API.Controllers
             }
             await _dbContext.SaveChangesAsync();
             return Ok(new { message = $"Successfully updated {gameneed.Count} games with Tags!" });
-
         }
     }
 }

@@ -18,26 +18,43 @@ namespace Game_Recommender_API.Services
             _context = context;
             _configuration = configuration;
         }
-        public async Task<string> GetGroqSummary(List<string> reviews)
+        public async Task<string> GetGroqSummary(List<string> reviews, string lang = "en")
         {
             if (reviews == null || reviews.Count == 0)
             {
-                return "لا توجد مراجعات كافية لهذه اللعبة حتى الآن.";
+                return lang == "ar" ? "لا توجد مراجعات كافية لهذه اللعبة حتى الآن." : "Not enough reviews available for this game yet.";
             }
 
-          
             string allReviewsText = string.Join("\n", reviews);
 
-     
             if (allReviewsText.Length > 6000)
             {
                 allReviewsText = allReviewsText.Substring(0, 6000);
             }
+
             using var client = new HttpClient();
             var groqKey = _configuration["ApiKeys:GroqApi"] ?? throw new ArgumentNullException("GroqApi key is missing.");
             client.DefaultRequestHeaders.Add("Authorization", $"Bearer {groqKey}");
-            string prompt = $@"
-You are a video game expert. Read the following player reviews for this game:
+
+            string prompt = lang == "ar" 
+                ? $@"أنت ناقد وخبير ألعاب فيديو محترف. اقرأ تقييمات ومراجعات اللاعبين التالية للعبة:
+{allReviewsText}
+
+بناءً فقط على هذه المراجعات، اكتب ملخصاً دقيقاً باللغة العربية الفصحى يوضح:
+3 مميزات رئيسية
+3 عيوب رئيسية
+
+استخدم هذا التنسيق الإلزامي بالضبط وبدون أي مقدمة أو كلام إضافي:
+Pros:
+- [الميزة 1]
+- [الميزة 2]
+- [الميزة 3]
+
+Cons:
+- [العيب 1]
+- [العيب 2]
+- [العيب 3]"
+                : $@"You are a video game expert. Read the following player reviews for this game:
 {allReviewsText}
 
 Based ONLY on these reviews, write a very short summary containing:
@@ -56,14 +73,16 @@ Cons:
 - [Con 3]";
             var requestBody = new
             {
-                model = "llama-3.1-8b-instant", 
+                model = "groq/compound-mini", 
                 messages = new[] { new { role = "user", content = prompt } },
                 temperature = 0.1 
             };
             var response = await client.PostAsJsonAsync("https://api.groq.com/openai/v1/chat/completions", requestBody);
             if (!response.IsSuccessStatusCode)
             {
-                return "حدث خطأ أثناء الاتصال بالذكاء الاصطناعي لتلخيص المراجعات.";
+                var errDetail = await response.Content.ReadAsStringAsync();
+                Console.WriteLine($"[GROQ ERROR] Status: {response.StatusCode} Details: {errDetail}");
+                return lang == "ar" ? "حدث خطأ أثناء الاتصال بالذكاء الاصطناعي لتلخيص المراجعات." : "An error occurred while generating the AI review summary.";
             }
             var jsonResponse = await response.Content.ReadAsStringAsync();
             using var doc = System.Text.Json.JsonDocument.Parse(jsonResponse);
@@ -74,7 +93,7 @@ Cons:
                              .GetProperty("content")
                              .GetString();
 
-            return summary ?? "لم يتمكن الذكاء الاصطناعي من تلخيص المراجعات.";
+            return summary ?? (lang == "ar" ? "لم يتمكن الذكاء الاصطناعي من تلخيص المراجعات." : "Unable to generate review summary.");
 
 
         }

@@ -24,25 +24,25 @@ namespace Game_Recommender_API.Controllers
             _GameApi = gameApi;
         }
         [HttpGet("{appid}/ai-summary")]
-        public async Task<IActionResult> GetAiReviewSummary(string appid)
+        public async Task<IActionResult> GetAiReviewSummary(string appid, [FromQuery] string lang = "en")
         {
             var game = await _dbContext.Games.FirstOrDefaultAsync(g => g.Appid == appid);
 
-            if (game != null && !string.IsNullOrEmpty(game.AiReviewSummary))
+            if (game != null && !string.IsNullOrEmpty(game.AiReviewSummary) && lang == "en")
             {
-                return Ok(new { Summary = game.AiReviewSummary, Source = "Database Cache" });
+                return Ok(new { Summary = game.AiReviewSummary, Source = "Database Cache", Lang = "en" });
             }
             
             var steamReviews = await _steamService.GetGameReviewsforaiAsync(appid);
-            var aiSummary = await _GameApi.GetGroqSummary(steamReviews);
+            var aiSummary = await _GameApi.GetGroqSummary(steamReviews, lang);
             
-            if (game != null)
+            if (game != null && lang == "en" && !aiSummary.Contains("حدث خطأ") && !aiSummary.Contains("error"))
             {
                 game.AiReviewSummary = aiSummary;
                 await _dbContext.SaveChangesAsync();
             }
             
-            return Ok(new { Summary = aiSummary, Source = "Groq AI" });
+            return Ok(new { Summary = aiSummary, Source = "Groq AI", Lang = lang });
         }
 
         }

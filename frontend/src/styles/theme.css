@@ -1,0 +1,82 @@
+/* ==========================================================================
+   LUDOVA DESIGN SYSTEM - ANTI-AI-SLOP TOKENS
+   Deep obsidian slate palette with tactile gaming surfaces and amber gold accents
+   ========================================================================== */
+
+:root {
+  /* Surface & Background Architecture (Deep Obsidian & Gunmetal) */
+  --bg-deep: #090c12;
+  --bg-base: #0f141f;
+  --bg-surface: #151c2b;
+  --bg-surface-hover: #1b2437;
+  --bg-elevated: #202b42;
+  --bg-overlay: rgba(9, 12, 18, 0.82);
+
+  /* Subtle, purposeful borders (No harsh 1px white AI glass lines) */
+  --border-subtle: rgba(255, 255, 255, 0.07);
+  --border-medium: rgba(255, 255, 255, 0.14);
+  --border-active: rgba(244, 63, 94, 0.55);
+
+  /* Curated Accent Palette (Neon Crimson / Ruby Gaming Highlights) */
+  --accent-amber: #f43f5e;
+  --accent-amber-hover: #e11d48;
+  --accent-amber-glow: rgba(244, 63, 94, 0.32);
+  --accent-amber-subtle: rgba(244, 63, 94, 0.12);
+
+  /* Tactical Match Score Tiers */
+  --score-emerald: #10b981;
+  --score-emerald-bg: rgba(16, 185, 129, 0.12);
+  --score-amber: #f43f5e;
+  --score-amber-bg: rgba(244, 63, 94, 0.14);
+  --score-slate: #818cf8;
+  --score-slate-bg: rgba(129, 140, 248, 0.12);
+
+  /* Tactical Tag / Status Colors */
+  --tag-bg: rgba(255, 255, 255, 0.05);
+  --tag-border: rgba(255, 255, 255, 0.08);
+  --tag-text: #94a3b8;
+  
+  --mature-red: #ef4444;
+  --mature-red-bg: rgba(239, 68, 68, 0.15);
+
+  --mainline-blue: #38bdf8;
+  --mainline-blue-bg: rgba(56, 189, 248, 0.12);
+
+  /* Typography Colors */
+  --text-primary: #f8fafc;
+  --text-secondary: #94a3b8;
+  --text-muted: #64748b;
+  --text-inverse: #090c12;
+
+  /* Typography Font Families */
+  --font-display: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-body: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-arabic: 'Tajawal', 'Cairo', sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+
+  /* Radii */
+  --radius-xs: 4px;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 18px;
+  --radius-xl: 24px;
+  --radius-full: 9999px;
+
+  /* Shadows */
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.4);
+  --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.5);
+  --shadow-lg: 0 16px 40px rgba(0, 0, 0, 0.65);
+  --shadow-glow: 0 0 35px var(--accent-amber-glow);
+
+  /* Transitions & Motion */
+  --ease-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --transition-fast: 150ms var(--ease-expo);
+  --transition-normal: 250ms var(--ease-expo);
+  --transition-slow: 400ms var(--ease-expo);
+}
+
+/* RTL Specific Overrides */
+[dir="rtl"] {
+  --font-display: 'Tajawal', sans-serif;
+  --font-body: 'Tajawal', sans-serif;
+}

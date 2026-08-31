@@ -60,9 +60,9 @@ namespace Game_Recommender_API.Controllers
 
             var requestBody = new
             {
-                model = "llama-3.1-8b-instant", // موديل ذكي جداً ومجاني من Groq
+                model = "groq/compound-mini",
                 messages = new[] { new { role = "user", content = prompt } },
-                temperature = 0.1 // عشان نخليه دقيق جداً وميألفش
+                temperature = 0.1
             };
 
             var content = new StringContent(JsonSerializer.Serialize(requestBody), Encoding.UTF8, "application/json");
