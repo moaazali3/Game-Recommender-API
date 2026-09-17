@@ -19,11 +19,13 @@ from scipy.sparse import vstack
 try:
     from . import build_model
     from .recommender import GameRecommender
-
+    from .logging_utils import configure_logging
 except ImportError:
     import build_model
     from recommender import GameRecommender
+    from logging_utils import configure_logging
 
+configure_logging()
 logger = logging.getLogger(__name__)
 
 CURRENT_DIR = Path(__file__).resolve().parent
@@ -46,20 +48,24 @@ def log_execution_date(action_name: str) -> None:
                 history = {str(k): str(v) for k, v in loaded.items()}
 
         except (OSError, json.JSONDecodeError):
-            logger.warning("Could not read execution history; recreating it.")
+            logger.exception("component=scheduler operation=history stage=read failure=history_file next_action=recreate execution history")
 
     history[action_name] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
-    LOG_FILE.write_text(json.dumps(history, indent = 4), encoding = "utf-8")
+    try:
+        LOG_FILE.write_text(json.dumps(history, indent = 4), encoding = "utf-8")
+    except Exception:
+        logger.exception("component=scheduler operation=history stage=write failure=filesystem next_action=check Dates directory permissions")
+        raise
 
 
 def train_and_save_pipeline(engine: Any = None) -> int:
     """Train and persist a complete model, returning its game count."""
+    logger.info("component=training operation=pipeline stage=start next_action=resolve database engine")
     database_engine = engine or build_model.get_engine()
-    logger.info("Reading data from SQL for model build...")
 
     count = build_model.train_and_save(database_engine)
-    logger.info("Model persisted for %d games.", count)
+    logger.info("component=training operation=pipeline stage=complete rows=%d next_action=reload model", count)
 
     return count
 
@@ -72,10 +78,10 @@ def run_monthly_retrain(recommender_holder: dict[str, Any], engine: Any = None) 
             recommender_holder["instance"] = GameRecommender()
 
         log_execution_date("last_monthly_retrain")
-        logger.info("Monthly retraining and reload completed.")
+        logger.info("component=scheduler operation=monthly_retrain stage=complete next_action=record execution date")
 
     except Exception:
-        logger.exception("Monthly retraining failed")
+        logger.exception("component=scheduler operation=monthly_retrain stage=execute failure=job next_action=retain current model and retry next schedule")
 
 
 def run_weekly_transform(recommender_holder: dict[str, Any], engine: Any = None) -> None:
@@ -87,30 +93,37 @@ def run_weekly_transform(recommender_holder: dict[str, Any], engine: Any = None)
     """
     try:
         recommender = recommender_holder.get("instance")
+
         if recommender is None:
-            logger.warning("Skipping weekly transform because no model is loaded.")
+            logger.warning("component=scheduler operation=weekly_transform stage=validation failure=model_unavailable next_action=run monthly retrain")
             return
 
         with MODEL_UPDATE_LOCK:
             database_engine = engine or build_model.get_engine()
-            database_games = pd.read_sql(
-                "SELECT Appid, Tags, keywords FROM games ORDER BY Appid ASC", database_engine
-            )
+
+            try:
+                database_games = build_model.load_games(database_engine)
+            except Exception:
+                logger.exception("component=database operation=query stage=weekly_transform failure=query next_action=check database connectivity and schema")
+                raise
 
             saved_count = len(recommender.app_ids)
-            database_ids = database_games["Appid"].tolist()
-            saved_ids = recommender.app_ids.tolist()
+            database_ids = build_model.validate_app_ids(database_games["Appid"].tolist(), source = "weekly database IDs", allow_numeric_strings = False)
+            saved_ids = build_model.validate_app_ids(recommender.app_ids.tolist(), source = "weekly saved IDs", allow_numeric_strings = False)
 
             if database_ids[:saved_count] != saved_ids:
-                logger.warning("Stored AppID prefix differs from database; requesting full retrain.")
+                logger.info("component=scheduler operation=weekly_transform stage=branch reason=data_prefix_mismatch saved_count=%d database_count=%d next_action=run full monthly retrain", saved_count, len(database_ids))
+                logger.warning("component=scheduler operation=weekly_transform stage=validation failure=data_prefix_mismatch next_action=run full monthly retrain")
                 run_monthly_retrain(recommender_holder, database_engine)
                 return
 
             if len(database_ids) <= saved_count:
-                logger.info("Database is up to date; no weekly transform required.")
+                logger.info("component=scheduler operation=weekly_transform stage=branch reason=no_new_games saved_count=%d database_count=%d next_action=wait for next schedule", saved_count, len(database_ids))
+                logger.info("component=scheduler operation=weekly_transform stage=complete next_action=wait for next schedule")
                 return
 
             new_games = database_games.iloc[saved_count:].copy()
+            logger.info("component=scheduler operation=weekly_transform stage=branch reason=new_games_detected appended_rows=%d", len(new_games))
             processed = build_model.preprocess(new_games, {"Tags": {",": " "}, "keywords": {",": " "}})
             new_tag_matrix = recommender.tag_vectorizer.transform(processed["Tags"])
             new_keyword_matrix = recommender.keyword_vectorizer.transform(processed["keywords"])
@@ -120,17 +133,17 @@ def run_weekly_transform(recommender_holder: dict[str, Any], engine: Any = None)
                 recommender.keyword_vectorizer,
                 vstack([recommender.tag_matrix, new_tag_matrix]),
                 vstack([recommender.keyword_matrix, new_keyword_matrix]),
-                saved_ids + list(processed["Appid"]),
+                saved_ids + build_model.validate_app_ids(processed["Appid"].tolist(), source = "weekly appended IDs", allow_numeric_strings = False),
                 model_dir = recommender.model_dir,
             )
 
             recommender_holder["instance"] = GameRecommender(recommender.model_dir)
 
         log_execution_date("last_weekly_transform")
-        logger.info("Weekly transform appended %d games and reloaded the model.", len(new_games))
+        logger.info("component=scheduler operation=weekly_transform stage=complete appended_rows=%d next_action=record execution date", len(new_games))
 
     except Exception:
-        logger.exception("Weekly transform job encountered an error")
+        logger.exception("component=scheduler operation=weekly_transform stage=execute failure=job next_action=retain current model and retry next schedule")
 
 
 def ensure_initial_model_exists(recommender_holder: dict[str, Any]) -> None:
@@ -140,13 +153,12 @@ def ensure_initial_model_exists(recommender_holder: dict[str, Any]) -> None:
     manifest_file = model_directory / "active_manifest.json"
 
     if not model_file.exists() and not manifest_file.exists():
-        logger.info("Model files not detected; running initial bootstrap.")
+        logger.info("component=model operation=bootstrap stage=missing_artifact next_action=run initial retrain")
         run_monthly_retrain(recommender_holder)
 
     else:
         try:
             recommender_holder["instance"] = GameRecommender()
-
         except (FileNotFoundError, ValueError):
-            logger.exception("Existing model artifacts are incomplete or inconsistent.")
+            logger.exception("component=model operation=bootstrap stage=load failure=invalid_artifact next_action=run initial retrain")
             run_monthly_retrain(recommender_holder)

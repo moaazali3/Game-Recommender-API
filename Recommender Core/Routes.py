@@ -6,20 +6,36 @@ import logging
 from typing import Any
 
 from fastapi import APIRouter
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 
 try:
     from .Services import PageBuilder
-
+    from .logging_utils import configure_logging
 except ImportError:
     from Services import PageBuilder
+    from logging_utils import configure_logging
 
+configure_logging()
 logger = logging.getLogger(__name__)
 
 
 class PageRequest(BaseModel):
-    """Request payload shared by dynamic page endpoints."""
+    """Request payload shared by dynamic page endpoints.
 
+    The primary recommendation request is ``{"app_id": 123, "top_n": 10}``.
+    Legacy nested filters and the remaining page options are still supported.
+    """
+
+    model_config = ConfigDict(
+        json_schema_extra = {
+            "examples": [{"app_id": 123, "top_n": 10}],
+        },
+    )
+
+    app_id: int | None = Field(
+        default = None,
+        description = "Application ID to use for recommendations.",
+    )
     filters: dict[str, Any] = Field(default_factory = dict)
     rules: list[dict[str, Any]] = Field(default_factory = list)
     top_n: int | None = None
@@ -42,10 +58,11 @@ class DynamicPageRouter:
         actual_request = request or PageRequest()
 
         try:
+            logger.info("component=api operation=request stage=start path=%s next_action=build_page", self.path)
             return {"status": "success", "data": self.builder.build(actual_request)}
 
         except Exception:
-            logger.exception("Failed to build page payload for %s", self.path)
+            logger.exception("component=api operation=request stage=build failure=api next_action=return_safe_error path=%s", self.path)
 
             return {
                 "status": "error", "data": {},

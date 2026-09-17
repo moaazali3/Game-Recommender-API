@@ -484,3 +484,7 @@ $RECYCLE.BIN/
 
 # The Testing Lab
 The Lab/
+
+# Models & Settings
+Recommender Core/model/
+Recommender Core/Dates/
