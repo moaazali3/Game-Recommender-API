@@ -481,3 +481,6 @@ $RECYCLE.BIN/
 # Vim temporary swap files
 *.swp
 /Game Recommender API/appsettings.json
+
+# The Testing Lab
+The Lab/
