@@ -114,8 +114,14 @@ const translations = {
     about_feat_warmup_desc: 'Smart background wake-up pings keep server models warm, ensuring lightning-fast recommendations without cold starts.',
     about_feat_fusion_title: 'Taste Fusion & Franchise Timelines',
     about_feat_fusion_desc: 'Blend multiple titles to discover hybrid gems, or navigate iconic franchises in chronological narrative order.',
-    about_developer_title: 'Developed by',
-    about_developer_name: 'Moaaz Ali Ali',
+    about_team_title: 'Project Engineering & Contributors',
+    about_dev1_name: 'Moaaz Ali Ali',
+    about_dev1_role: 'Lead Developer & Software Engineer',
+    about_dev1_desc: 'Full-stack platform architecture, ASP.NET Core APIs, UI/UX design, and database systems.',
+    about_dev2_name: 'Abdallah Abukhalil',
+    about_dev2_role: 'Machine Learning Engineer & Data Analyst',
+    about_dev2_desc: 'Machine Learning recommendation model development, similarity algorithms, and Hugging Face neural inference.',
+    about_view_linkedin: 'LinkedIn Profile',
 
     // 404
     not_found_title: '404 - Page Not Found',
@@ -235,8 +241,14 @@ const translations = {
     about_feat_warmup_desc: 'إيقاظ تلقائي وتنبيه فوري في الخلفية لموديل الذكاء الاصطناعي لضمان سرعة الاستجابة وتفادي فترات الانتظار.',
     about_feat_fusion_title: 'دمج الألعاب والسلاسل القصصية',
     about_feat_fusion_desc: 'دمج أذواق ألعاب متعددة وتصفح تسلسل أجزاء السلاسل الكبرى بحسب أحداث القصة وتاريخ الإصدار.',
-    about_developer_title: 'تم التطوير بواسطة',
-    about_developer_name: 'معاذ علي علي (Moaaz Ali)',
+    about_team_title: 'فريق التطوير والذكاء الاصطناعي',
+    about_dev1_name: 'معاذ علي علي (Moaaz Ali)',
+    about_dev1_role: 'مطور المنصة وهندسة البرمجيات',
+    about_dev1_desc: 'معمارية النظام الكاملة (Full-Stack)، تكامل خوادم ASP.NET Core، تصميم الواجهات التفاعلية وإدارة قواعد البيانات.',
+    about_dev2_name: 'عبد الله أبو خليل (Abdallah Abukhalil)',
+    about_dev2_role: 'مهندس تعلّم آلي ومحلل بيانات (ML Engineer)',
+    about_dev2_desc: 'تصميم وتدريب نموذج التعلّم الآلي (Machine Learning) للترشيحات، وتطوير خوارزميات التشابه المتجهي على Hugging Face.',
+    about_view_linkedin: 'حساب LinkedIn',
 
     // 404
     not_found_title: '404 - الصفحة غير موجودة',

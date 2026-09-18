@@ -1,7 +1,7 @@
 import React from 'react';
 import { createPortal } from 'react-dom';
 import { useLanguage } from '../context/LanguageContext';
-import { X, Sparkles, Cpu, Zap, GitMerge, UserCheck } from 'lucide-react';
+import { X, Sparkles, Cpu, Zap, GitMerge, Code2, Users, ExternalLink } from 'lucide-react';
 
 export const AboutModal = ({ isOpen, onClose }) => {
   const { t } = useLanguage();
@@ -70,14 +70,53 @@ export const AboutModal = ({ isOpen, onClose }) => {
             ))}
           </div>
 
-          {/* Developer Spotlight Card */}
-          <div className="about-card dev-card">
-            <div className="dev-card-icon">
-              <UserCheck size={22} />
+          {/* Project Engineering & Contributors */}
+          <div className="about-team-section">
+            <div className="about-team-heading">
+              <Users size={18} className="team-heading-icon" />
+              <h3 className="about-team-title">{t('about_team_title')}</h3>
             </div>
-            <div className="dev-card-info">
-              <span className="dev-label">{t('about_developer_title')}</span>
-              <h3 className="dev-name highlight-amber">{t('about_developer_name')}</h3>
+
+            <div className="about-team-grid">
+              {/* Moaaz Card */}
+              <div className="team-member-card moaaz-card">
+                <div className="team-member-header">
+                  <div className="team-avatar-box moaaz-avatar">
+                    <Code2 size={22} />
+                  </div>
+                  <div className="team-header-info">
+                    <h4 className="member-name highlight-amber">{t('about_dev1_name')}</h4>
+                    <span className="member-role">{t('about_dev1_role')}</span>
+                  </div>
+                </div>
+                <p className="member-desc">{t('about_dev1_desc')}</p>
+              </div>
+
+              {/* Abdallah Card */}
+              <div className="team-member-card abdallah-card">
+                <div className="team-member-header">
+                  <div className="team-avatar-box abdallah-avatar">
+                    <Cpu size={22} />
+                  </div>
+                  <div className="team-header-info">
+                    <div className="member-name-row">
+                      <h4 className="member-name highlight-cyan">{t('about_dev2_name')}</h4>
+                      <a
+                        href="https://www.linkedin.com/in/abdallahabukhalil/"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="member-social-link"
+                        aria-label={t('about_view_linkedin')}
+                        title={t('about_view_linkedin')}
+                      >
+                        <ExternalLink size={14} />
+                      </a>
+                    </div>
+                    <span className="member-role ml-badge">{t('about_dev2_role')}</span>
+                  </div>
+                </div>
+                <p className="member-desc">{t('about_dev2_desc')}</p>
+              </div>
             </div>
           </div>
         </div>
@@ -85,7 +124,7 @@ export const AboutModal = ({ isOpen, onClose }) => {
 
       <style>{`
         .about-modal-surface {
-          max-width: 620px;
+          max-width: 680px;
           max-height: 88vh;
           overflow-y: auto;
           scrollbar-width: thin;
@@ -142,14 +181,14 @@ export const AboutModal = ({ isOpen, onClose }) => {
           display: flex;
           flex-direction: column;
           gap: 0.75rem;
-          margin: 0.35rem 0;
+          margin: 0.25rem 0;
         }
 
         .about-feature-item {
           display: flex;
           align-items: flex-start;
           gap: 0.9rem;
-          padding: 0.9rem 1.1rem;
+          padding: 0.85rem 1.1rem;
           border-radius: var(--radius-md);
           border: 1px solid rgba(255, 255, 255, 0.07);
           backdrop-filter: blur(8px);
@@ -187,55 +226,169 @@ export const AboutModal = ({ isOpen, onClose }) => {
           margin: 0;
         }
 
-        .about-card {
+        /* Team Section */
+        .about-team-section {
+          display: flex;
+          flex-direction: column;
+          gap: 0.85rem;
+          margin-top: 0.5rem;
+          padding-top: 1rem;
+          border-top: 1px solid var(--border-subtle);
+        }
+
+        .about-team-heading {
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+        }
+
+        .team-heading-icon {
+          color: var(--accent-amber);
+        }
+
+        .about-team-title {
+          font-size: 1rem;
+          font-weight: 700;
+          color: var(--text-primary);
+          margin: 0;
+        }
+
+        .about-team-grid {
+          display: grid;
+          grid-template-columns: repeat(2, 1fr);
+          gap: 0.85rem;
+        }
+
+        .team-member-card {
           background: rgba(255, 255, 255, 0.025);
           border: 1px solid var(--border-subtle);
           border-radius: var(--radius-lg);
-          padding: 1.25rem;
-        }
-
-        .dev-card {
+          padding: 1.1rem;
           display: flex;
-          align-items: center;
-          gap: 1.25rem;
-          background: linear-gradient(135deg, rgba(244, 63, 94, 0.1), rgba(15, 20, 31, 0.9));
-          border-color: rgba(244, 63, 94, 0.35);
-          padding: 1.1rem 1.35rem;
-          margin-top: 0.25rem;
+          flex-direction: column;
+          gap: 0.75rem;
+          transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
         }
 
-        .dev-card-icon {
-          width: 44px;
-          height: 44px;
-          border-radius: var(--radius-full);
-          background: rgba(244, 63, 94, 0.18);
-          color: var(--accent-amber);
+        .team-member-card:hover {
+          transform: translateY(-2px);
+        }
+
+        .moaaz-card {
+          background: linear-gradient(135deg, rgba(244, 63, 94, 0.08), rgba(15, 20, 31, 0.85));
+          border-color: rgba(244, 63, 94, 0.25);
+        }
+
+        .moaaz-card:hover {
+          border-color: rgba(244, 63, 94, 0.5);
+          box-shadow: 0 4px 20px rgba(244, 63, 94, 0.15);
+        }
+
+        .abdallah-card {
+          background: linear-gradient(135deg, rgba(6, 182, 212, 0.08), rgba(15, 20, 31, 0.85));
+          border-color: rgba(6, 182, 212, 0.25);
+        }
+
+        .abdallah-card:hover {
+          border-color: rgba(6, 182, 212, 0.5);
+          box-shadow: 0 4px 20px rgba(6, 182, 212, 0.15);
+        }
+
+        .team-member-header {
+          display: flex;
+          align-items: flex-start;
+          gap: 0.85rem;
+        }
+
+        .team-avatar-box {
+          width: 40px;
+          height: 40px;
+          border-radius: var(--radius-md);
           display: flex;
           align-items: center;
           justify-content: center;
           flex-shrink: 0;
         }
 
-        .dev-card-info {
+        .moaaz-avatar {
+          background: rgba(244, 63, 94, 0.18);
+          color: var(--accent-amber);
+          border: 1px solid rgba(244, 63, 94, 0.35);
+        }
+
+        .abdallah-avatar {
+          background: rgba(6, 182, 212, 0.18);
+          color: #06b6d4;
+          border: 1px solid rgba(6, 182, 212, 0.35);
+        }
+
+        .team-header-info {
           display: flex;
           flex-direction: column;
           gap: 0.25rem;
+          min-width: 0;
+          flex: 1;
         }
 
-        .dev-label {
-          font-size: 0.75rem;
-          font-weight: 700;
-          text-transform: uppercase;
-          letter-spacing: 0.08em;
-          color: var(--accent-amber);
+        .member-name-row {
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+          justify-content: space-between;
         }
 
-        .dev-name {
+        .member-name {
           font-family: var(--font-display);
-          font-size: 1.2rem;
-          font-weight: 900;
-          color: var(--text-primary);
+          font-size: 1.05rem;
+          font-weight: 800;
+          margin: 0;
           letter-spacing: -0.01em;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+
+        .highlight-cyan {
+          color: #38bdf8;
+        }
+
+        .member-social-link {
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          width: 26px;
+          height: 26px;
+          border-radius: var(--radius-sm);
+          background: rgba(6, 182, 212, 0.15);
+          color: #38bdf8;
+          border: 1px solid rgba(6, 182, 212, 0.35);
+          transition: all 0.2s ease;
+          flex-shrink: 0;
+          text-decoration: none;
+        }
+
+        .member-social-link:hover {
+          background: #06b6d4;
+          color: #0b1120;
+          box-shadow: 0 0 10px rgba(6, 182, 212, 0.5);
+          transform: scale(1.08);
+        }
+
+        .member-role {
+          font-size: 0.75rem;
+          font-weight: 600;
+          color: var(--accent-amber);
+          line-height: 1.35;
+        }
+
+        .member-role.ml-badge {
+          color: #38bdf8;
+        }
+
+        .member-desc {
+          font-size: 0.82rem;
+          color: var(--text-secondary);
+          line-height: 1.5;
           margin: 0;
         }
 
@@ -244,9 +397,15 @@ export const AboutModal = ({ isOpen, onClose }) => {
             max-width: 95vw;
             padding: 1.25rem 1rem;
           }
+          .about-features-list {
+            gap: 0.6rem;
+          }
           .about-feature-item {
             flex-direction: column;
             gap: 0.5rem;
+          }
+          .about-team-grid {
+            grid-template-columns: 1fr;
           }
         }
       `}</style>
