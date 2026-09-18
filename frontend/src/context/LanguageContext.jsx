@@ -108,8 +108,8 @@ const translations = {
     about_subtitle: 'v2.5 • AI Neural Recommendation Engine',
     about_p1: 'Ludova Games is an intelligent discovery platform powered by advanced Machine Learning. Instead of relying on generic genres, our neural recommendation engine deeply analyzes Steam community reviews, gameplay tags, and player affinities to deliver spot-on matches for your favorite titles.',
     about_p2: 'Explore single games with fine-tuned affinity tiers, blend multiple games using Taste Fusion, browse complete game series in their true story chronology, or get instant AI-powered Steam review summaries—all wrapped in a fast, fully mobile-responsive interface.',
-    about_feat_ml_title: 'Neural ML Recommendation Engine',
-    about_feat_ml_desc: 'Powered by Hugging Face deep learning embeddings and cosine similarity across thousands of indexed Steam titles.',
+    about_feat_ml_title: 'Game Recommendation Engine',
+    about_feat_ml_desc: 'Uses machine learning to find similar games from thousands of Steam titles, comparing game information to suggest titles with similar content and features.',
     about_feat_warmup_title: 'Smart In-Memory Caching',
     about_feat_warmup_desc: 'High-performance 24h caching reduces server overhead and delivers instant repeat discoveries.',
     about_feat_fusion_title: 'Taste Fusion & Franchise Timelines',
@@ -120,7 +120,7 @@ const translations = {
     about_dev1_desc: 'Full-stack platform architecture, ASP.NET Core APIs, UI/UX design, and database systems.',
     about_dev2_name: 'Abdallah Abukhalil',
     about_dev2_role: 'Machine Learning Engineer & Data Analyst',
-    about_dev2_desc: 'Machine Learning recommendation model development, similarity algorithms, and Hugging Face neural inference.',
+    about_dev2_desc: 'Machine learning recommendation systems, similarity algorithms, and data-driven solutions.',
     about_view_linkedin: 'LinkedIn Profile',
 
     // 404
@@ -235,8 +235,8 @@ const translations = {
     about_subtitle: 'v2.5 • محرك ذكاء اصطناعي وتعلم آلي فائق الدقة',
     about_p1: 'منصة Ludova Games هي أداة ذكية لاكتشاف الألعاب مدعومة بمحرك تعلم آلي (Machine Learning) متطور. بدلاً من الاعتماد على التصنيفات السطحية، يقوم نموذج الذكاء الاصطناعي بتحليل عميق لآلاف مراجعات مجتمع Steam الحقيقية وسلوك اللاعبين وميكانيكيات اللعب لترشيح ألعاب تشبه ذوقك الحقيقي بدقة متناهية.',
     about_p2: 'يمكنك استكشاف ألعاب فردية بنظام تقييم التوافق المطور، أو دمج حتى 4 ألعاب بميزة (Taste Fusion) لاكتشاف ألعاب هجينة تجمع بين عوالمك المفضلة، أو تصفح سلاسل الألعاب بالترتيب الزمني الصحيح لأحداث القصة، بالإضافة لملخصات مراجعات اللاعبين الفورية — مع تجربة سلسة ومتوافقة بالكامل مع الهواتف الذكية.',
-    about_feat_ml_title: 'محرك تعلم آلي عصبي (Neural ML)',
-    about_feat_ml_desc: 'مدعوم بنماذج تعلّم آلي متقدمة على Hugging Face لحساب نسب التطابق والتشابه عبر تمثيل متجهي عميق.',
+    about_feat_ml_title: 'محرك ترشيح الألعاب (Game Recommendation Engine)',
+    about_feat_ml_desc: 'يستخدم التعلّم الآلي للعثور على ألعاب مشابهة من بين آلاف ألعاب Steam، بمقارنة بيانات ومواصفات الألعاب لاقتراح عناوين تشابهها في المحتوى والمميزات.',
     about_feat_warmup_title: 'تخزين مؤقت ذكي واستجابة فائقة',
     about_feat_warmup_desc: 'نظام كاش متطور يحفظ نتائج الترشيحات لتقديم استجابات فورية وتقليل استهلاك موارد الخوادم.',
     about_feat_fusion_title: 'دمج الألعاب والسلاسل القصصية',
@@ -246,8 +246,8 @@ const translations = {
     about_dev1_role: 'مطور المنصة وهندسة البرمجيات',
     about_dev1_desc: 'معمارية النظام الكاملة (Full-Stack)، تكامل خوادم ASP.NET Core، تصميم الواجهات التفاعلية وإدارة قواعد البيانات.',
     about_dev2_name: 'عبد الله أبو خليل (Abdallah Abukhalil)',
-    about_dev2_role: 'مهندس تعلّم آلي ومحلل بيانات (ML Engineer)',
-    about_dev2_desc: 'تصميم وتدريب نموذج التعلّم الآلي (Machine Learning) للترشيحات، وتطوير خوارزميات التشابه المتجهي على Hugging Face.',
+    about_dev2_role: 'Machine Learning Engineer & Data Analyst',
+    about_dev2_desc: 'أنظمة ترشيح قائمة على التعلّم الآلي، وخوارزميات قياس التشابه، وحلول برمجية مدفوعة بالبيانات (Data-driven solutions).',
     about_view_linkedin: 'حساب LinkedIn',
 
     // 404
