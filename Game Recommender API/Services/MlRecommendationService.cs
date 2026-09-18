@@ -31,55 +31,6 @@ namespace Game_Recommender_API.Services
             _httpClient.Timeout = TimeSpan.FromSeconds(30);
         }
 
-        private static bool _isWarmingUp = false;
-
-        public async Task<bool> WarmUpAsync()
-        {
-            if (_isWarmingUp)
-            {
-                _logger.LogInformation("[MlRecommendationService] Warmup is already in progress, skipping duplicate call.");
-                return true;
-            }
-
-            _isWarmingUp = true;
-            _logger.LogInformation("[MlRecommendationService] Starting proactive wake-up ping for Hugging Face ML Space...");
-
-            var pingPayload = new MlRecommendationRequest
-            {
-                AppId = 12120, // Sample GTA SA AppId
-                TopN = 1
-            };
-
-            for (int attempt = 1; attempt <= 2; attempt++)
-            {
-                try
-                {
-                    _logger.LogInformation("[MlRecommendationService] Warmup attempt {Attempt}/2 (Timeout: 30s)...", attempt);
-                    using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(30));
-                    var response = await _httpClient.PostAsJsonAsync(_endpointUrl, pingPayload, cts.Token);
-                    if (response.IsSuccessStatusCode)
-                    {
-                        _logger.LogInformation("[MlRecommendationService] Hugging Face Space is AWAKE and responsive! (Status: {StatusCode})", response.StatusCode);
-                        _isWarmingUp = false;
-                        return true;
-                    }
-
-                    _logger.LogWarning("[MlRecommendationService] Warmup attempt {Attempt} status: {Status}", attempt, response.StatusCode);
-                }
-                catch (Exception ex)
-                {
-                    _logger.LogWarning("[MlRecommendationService] Warmup attempt {Attempt} exception (waking up space): {Message}", attempt, ex.Message);
-                }
-
-                if (attempt < 2)
-                {
-                    await Task.Delay(3000); // Brief pause before retry
-                }
-            }
-
-            _isWarmingUp = false;
-            return false;
-        }
 
         public async Task<List<RecommendedGameDto>?> GetRecommendationsAsync(string appId, int topN = 10)
         {

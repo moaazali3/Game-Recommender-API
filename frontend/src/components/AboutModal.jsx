@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { useLanguage } from '../context/LanguageContext';
-import { X, Sparkles, Cpu, Zap, GitMerge, Code2, Users, ExternalLink } from 'lucide-react';
+import { X, Sparkles, Cpu, Database, GitMerge, Code2, Users, ExternalLink } from 'lucide-react';
 
 export const AboutModal = ({ isOpen, onClose }) => {
   const { t } = useLanguage();
@@ -26,7 +26,7 @@ export const AboutModal = ({ isOpen, onClose }) => {
       color: '#06b6d4'
     },
     {
-      icon: <Zap size={20} />,
+      icon: <Database size={20} />,
       title: t('about_feat_warmup_title'),
       desc: t('about_feat_warmup_desc'),
       gradient: 'linear-gradient(135deg, rgba(234, 179, 8, 0.15), rgba(234, 179, 8, 0.05))',
