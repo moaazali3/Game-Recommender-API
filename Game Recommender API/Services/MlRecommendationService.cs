@@ -25,7 +25,7 @@ namespace Game_Recommender_API.Services
             _steamService = steamService;
             _logger = logger;
             _endpointUrl = configuration["MlApi:BaseUrl"] 
-                ?? "https://abdallahabukhalil-game-recommender-api.hf.space/api/v1/game-details";
+                ?? throw new InvalidOperationException("MlApi:BaseUrl configuration is missing.");
 
             // Set timeout so it doesn't block forever if HF space is sleeping
             _httpClient.Timeout = TimeSpan.FromSeconds(10);
