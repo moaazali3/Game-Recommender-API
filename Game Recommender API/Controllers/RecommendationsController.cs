@@ -9,6 +9,27 @@ using System.Net.WebSockets;
 
 namespace Game_Recommender_API.Controllers
 {
+    public static class SeedingStatusTracker
+    {
+        public static bool IsRunning { get; set; } = false;
+        public static int CurrentPage { get; set; } = 0;
+        public static int ProcessedInPage { get; set; } = 0;
+        public static int AddedInPage { get; set; } = 0;
+        public static string CurrentGameName { get; set; } = string.Empty;
+        public static string CurrentAppId { get; set; } = string.Empty;
+        public static DateTime LastActivity { get; set; } = DateTime.Now;
+        public static List<string> RecentLogs { get; set; } = new();
+
+        public static void AddLog(string log)
+        {
+            lock (RecentLogs)
+            {
+                RecentLogs.Insert(0, $"[{DateTime.Now:HH:mm:ss}] {log}");
+                if (RecentLogs.Count > 40) RecentLogs.RemoveAt(RecentLogs.Count - 1);
+            }
+        }
+    }
+
     [ApiController]
     [Route("api/[controller]")]
     public class RecommendationsController : ControllerBase
@@ -16,13 +37,50 @@ namespace Game_Recommender_API.Controllers
         private readonly SteamReviewService _steamService;
         private readonly TextAnalyzerService _textAnalyzer;
         private readonly AppDbContext _dbContext;
+        private readonly MlRecommendationService _mlService;
 
-        // عملنا Inject للخدمتين
-        public RecommendationsController(SteamReviewService steamService, TextAnalyzerService textAnalyzer, AppDbContext appDbContext)
+        public RecommendationsController(
+            SteamReviewService steamService,
+            TextAnalyzerService textAnalyzer,
+            AppDbContext appDbContext,
+            MlRecommendationService mlService)
         {
             _steamService = steamService;
             _textAnalyzer = textAnalyzer;
             _dbContext = appDbContext;
+            _mlService = mlService;
+        }
+
+        [HttpGet("stats")]
+        public async Task<IActionResult> GetLiveStats()
+        {
+            var totalGames = await _dbContext.Games.CountAsync();
+            var latestGames = await _dbContext.Games
+                .OrderByDescending(g => g.LastUpdated)
+                .Take(12)
+                .Select(g => new
+                {
+                    g.Appid,
+                    g.Name,
+                    g.Tags,
+                    g.keywords,
+                    g.LastUpdated
+                })
+                .ToListAsync();
+
+            return Ok(new
+            {
+                TotalGamesInDatabase = totalGames,
+                IsSeedingRunning = SeedingStatusTracker.IsRunning,
+                CurrentPage = SeedingStatusTracker.CurrentPage,
+                CurrentGame = SeedingStatusTracker.CurrentGameName,
+                CurrentAppId = SeedingStatusTracker.CurrentAppId,
+                ProcessedInCurrentPage = SeedingStatusTracker.ProcessedInPage,
+                AddedInCurrentPage = SeedingStatusTracker.AddedInPage,
+                LastActivity = SeedingStatusTracker.LastActivity,
+                RecentLogs = SeedingStatusTracker.RecentLogs,
+                LatestSavedGames = latestGames
+            });
         }
 
         [HttpGet("{appId}/style")]
@@ -41,15 +99,26 @@ namespace Game_Recommender_API.Controllers
                 StyleTags = styleKeywords
             });
         }
+
         [HttpPost("seed")]
-        public async Task<IActionResult> getgamesinfo([FromQuery] int page = 1)
+        public async Task<IActionResult> getgamesinfo([FromQuery] int page = 0)
         {
+            SeedingStatusTracker.IsRunning = true;
+            SeedingStatusTracker.CurrentPage = page;
+            SeedingStatusTracker.ProcessedInPage = 0;
+            SeedingStatusTracker.AddedInPage = 0;
+            SeedingStatusTracker.LastActivity = DateTime.Now;
+            SeedingStatusTracker.AddLog($"بدء سحب الصفحة {page} من متجر Steam...");
+
             Console.WriteLine($"[SEED START] بدء عملية سحب الألعاب وتحليلها للصفحة {page}...");
-            var result = await _steamService.Gettop1000game();
+            var result = await _steamService.Gettop1000game(page);
             int currentIndex = 0;
             int addedInBatch = 0;
             int totalNewAdded = 0;
             int totalGames = result.Count;
+
+            // جلب الألعاب الموجودة مسبقاً في الذاكرة لتسريع الفحص بدون 1000 كويري منفصلة
+            var existingAppIds = await _dbContext.Games.Select(g => g.Appid).ToHashSetAsync();
 
             foreach (var game in result)
             {
@@ -57,13 +126,18 @@ namespace Game_Recommender_API.Controllers
                 string currappid = game.Key;
                 string currappname = game.Value;
 
-                if (_dbContext.Games.Any(g => g.Appid == currappid))
+                SeedingStatusTracker.ProcessedInPage = currentIndex;
+                SeedingStatusTracker.CurrentGameName = currappname;
+                SeedingStatusTracker.CurrentAppId = currappid;
+                SeedingStatusTracker.LastActivity = DateTime.Now;
+
+                if (existingAppIds.Contains(currappid))
                 {
-                    Console.WriteLine($"[SKIP] ({currentIndex}/{totalGames}) تخطي '{currappname}' (موجودة مسبقاً).");
                     continue;
                 }
 
                 Console.WriteLine($"[PROCESSING] ({currentIndex}/{totalGames}) جاري سحب وتحليل: {currappname} (ID: {currappid})...");
+                SeedingStatusTracker.AddLog($"تحليل مراجعات و Tags: {currappname} (ID: {currappid})");
 
                 var review = await _steamService.GetGameReviewsAsync(currappid);
                 if (review == null || review.Count == 0)
@@ -87,18 +161,21 @@ namespace Game_Recommender_API.Controllers
                 };
 
                 _dbContext.Games.Add(newgame);
+                existingAppIds.Add(currappid);
                 addedInBatch++;
                 totalNewAdded++;
+                SeedingStatusTracker.AddedInPage = totalNewAdded;
 
-                // حفظ الدفعة في الداتابيز كل 100 لعبة لحماية التقدم
-                if (addedInBatch >= 100)
+                // حفظ الدفعة في الداتابيز كل 25 لعبة لحماية التقدم بسرعة
+                if (addedInBatch >= 25)
                 {
                     await _dbContext.SaveChangesAsync();
-                    Console.WriteLine($"[BATCH SAVED] ✅ تم حفظ دفعة من {addedInBatch} لعبة في قاعدة البيانات بنجاح! (إجمالي المضاف حتى الآن: {totalNewAdded})");
+                    SeedingStatusTracker.AddLog($"✅ تم حفظ دفعة 25 لعبة في قاعدة البيانات! (إجمالي الصفحة: {totalNewAdded})");
+                    Console.WriteLine($"[BATCH SAVED] ✅ تم حفظ دفعة من {addedInBatch} لعبة في قاعدة البيانات! (إجمالي المضاف بالصفحة {page}: {totalNewAdded})");
                     addedInBatch = 0;
                 }
 
-                await Task.Delay(1000);
+                await Task.Delay(400);
             }
 
             if (addedInBatch > 0)
@@ -107,10 +184,13 @@ namespace Game_Recommender_API.Controllers
                 Console.WriteLine($"[FINAL SAVED] ✅ تم حفظ آخر {addedInBatch} لعبة بنجاح!");
             }
 
-            Console.WriteLine($"[SEED COMPLETE] انتهت العملية بنجاح. تم إضافة {totalNewAdded} لعبة جديدة إلى قاعدة البيانات.");
+            SeedingStatusTracker.IsRunning = false;
+            SeedingStatusTracker.AddLog($"🎉 اكتملت الصفحة {page} بنجاح! تم إضافة {totalNewAdded} لعبة جديدة.");
+            Console.WriteLine($"[SEED COMPLETE] انتهت الصفحة {page} بنجاح. تم إضافة {totalNewAdded} لعبة جديدة إلى قاعدة البيانات.");
             return Ok(new
             {
-                Message = "تم سحب الألعاب وتحليلها وحفظها في قاعدة البيانات بنجاح!",
+                Message = $"تم سحب وتحليل الصفحة {page} بنجاح!",
+                Page = page,
                 TotalNewAdded = totalNewAdded,
                 TotalProcessed = currentIndex
             });
@@ -323,7 +403,7 @@ namespace Game_Recommender_API.Controllers
             });
         }
         [HttpGet("{appid}/recommendations")]
-        public async Task<IActionResult> getrecommedations(string appid)
+        public async Task<IActionResult> getrecommedations(string appid, [FromQuery] string? engine = null)
         {
             string cleanAppId = appid.Trim();
             string expandedName = GameAliases.TryGetValue(cleanAppId, out var aliasTarget) ? aliasTarget : cleanAppId;
@@ -335,18 +415,37 @@ namespace Game_Recommender_API.Controllers
             if (targetgame == null)
                 return NotFound(new { message = "مش موجوده" });
 
-            var targetKeywords = targetgame.keywords != null ? targetgame.keywords.Split(',') : new string[0];
-            var targetTags = targetgame.Tags != null ? targetgame.Tags.Split(',') : new string[0];
-            var matureTags = new List<string> { "nudity", "sexual content" };
-
-            var allother = await _dbContext.Games.Where(g => g.Appid != targetgame.Appid).ToListAsync();
-
             var HasSeries = await _dbContext.SeriesGames.AnyAsync(s => s.SteamId == targetgame.Appid);
 
             var targetseriesid = await _dbContext.SeriesGames
                      .Where(s => s.SteamId == targetgame.Appid)
                      .Select(s => s.SeriesId)
                      .FirstOrDefaultAsync();
+
+            // 1. Try Machine Learning model if not explicitly forced to 'classic'
+            if (!string.Equals(engine, "classic", StringComparison.OrdinalIgnoreCase))
+            {
+                var mlRecommendations = await _mlService.GetRecommendationsAsync(targetgame.Appid, 10);
+                if (mlRecommendations != null && mlRecommendations.Count > 0)
+                {
+                    return Ok(new
+                    {
+                        TargetGame = targetgame.Name,
+                        TargetAppId = targetgame.Appid,
+                        Source = "machine_learning",
+                        Recommendations = mlRecommendations,
+                        HasSeries = HasSeries,
+                        SeriesId = targetseriesid
+                    });
+                }
+            }
+
+            // 2. Fallback to heuristic tag & keyword matching
+            var targetKeywords = targetgame.keywords != null ? targetgame.keywords.Split(',') : new string[0];
+            var targetTags = targetgame.Tags != null ? targetgame.Tags.Split(',') : new string[0];
+            var matureTags = new List<string> { "nudity", "sexual content" };
+
+            var allother = await _dbContext.Games.Where(g => g.Appid != targetgame.Appid).ToListAsync();
 
             allother = allother.Where(g =>
             {
@@ -414,6 +513,7 @@ namespace Game_Recommender_API.Controllers
             {
                 TargetGame = targetgame.Name,
                 TargetAppId = targetgame.Appid,
+                Source = "heuristic",
                 Recommendations = recommend,
                 HasSeries = HasSeries,
                 SeriesId = targetseriesid

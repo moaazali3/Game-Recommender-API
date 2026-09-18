@@ -14,6 +14,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 builder.Services.AddSingleton<TextAnalyzerService>();
 builder.Services.AddHttpClient<GameApiService>();
 builder.Services.AddHttpClient<SteamReviewService>();
+builder.Services.AddHttpClient<MlRecommendationService>();
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAll", builder =>

@@ -392,11 +392,46 @@ export const Home = () => {
 
           {/* Recommendations Header */}
           <div className="recommendations-header">
-            <div className="rec-title-group">
+            <div className="rec-title-group" style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: '0.6rem' }}>
               <h3 className="rec-section-title heading-display">{t('recommendations_title')}</h3>
               <span className="rec-count-badge">
                 {recList.length} {t('recommendations_count')}
               </span>
+              {(resultData?.Source === 'machine_learning' || resultData?.source === 'machine_learning') && (
+                <span className="badge-engine badge-engine--ml" style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '5px',
+                  padding: '4px 10px',
+                  borderRadius: '20px',
+                  fontSize: '0.75rem',
+                  fontWeight: '700',
+                  background: 'linear-gradient(135deg, rgba(99, 102, 241, 0.25), rgba(168, 85, 247, 0.25))',
+                  color: '#c084fc',
+                  border: '1px solid rgba(168, 85, 247, 0.4)',
+                  letterSpacing: '0.02em'
+                }}>
+                  <Sparkles size={13} />
+                  <span>ML Neural Engine</span>
+                </span>
+              )}
+              {(resultData?.Source === 'heuristic' || resultData?.source === 'heuristic') && (
+                <span className="badge-engine badge-engine--heuristic" style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '5px',
+                  padding: '4px 10px',
+                  borderRadius: '20px',
+                  fontSize: '0.75rem',
+                  fontWeight: '600',
+                  background: 'rgba(255, 255, 255, 0.08)',
+                  color: '#94a3b8',
+                  border: '1px solid rgba(255, 255, 255, 0.15)'
+                }}>
+                  <Compass size={13} />
+                  <span>Smart Tag Matching</span>
+                </span>
+              )}
             </div>
           </div>
 
@@ -821,13 +856,46 @@ export const Home = () => {
 
         @media (max-width: 640px) {
           .home-hero {
-            padding: 2rem 0.5rem;
+            padding: 2rem 0.25rem 1.5rem;
+          }
+          .hero-title {
+            font-size: 2.1rem;
+          }
+          .hero-subtitle {
+            font-size: 0.95rem;
+          }
+          .search-mode-tabs {
+            width: 100%;
+            max-width: 330px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+          }
+          .mode-tab-btn {
+            justify-content: center;
+            padding: 0.45rem 0.6rem;
+            font-size: 0.78rem;
           }
           .search-form {
             padding: 0.35rem 0.4rem 0.35rem 0.85rem;
           }
+          [dir="rtl"] .search-form {
+            padding: 0.35rem 0.85rem 0.35rem 0.4rem;
+          }
           .search-submit-btn {
-            padding: 0.65rem 1rem;
+            padding: 0.65rem 0.95rem;
+            font-size: 0.85rem;
+          }
+          .recommendations-header {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 0.65rem;
+          }
+          .recommendations-grid {
+            grid-template-columns: 1fr;
+            gap: 1rem;
+          }
+          .blended-target-spotlight {
+            padding: 1.25rem 1rem;
           }
         }
       `}</style>

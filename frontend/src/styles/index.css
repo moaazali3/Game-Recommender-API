@@ -484,3 +484,34 @@ img {
   background: rgba(255, 255, 255, 0.08);
   color: var(--text-primary);
 }
+
+/* ==========================================================================
+   MOBILE RESPONSIVENESS & TOUCH OPTIMIZATION
+   ========================================================================== */
+
+@media (max-width: 640px) {
+  .main-content {
+    padding: 1.25rem 0.85rem 4.5rem;
+  }
+
+  .modal-backdrop {
+    padding: 0.75rem;
+  }
+
+  .modal-surface {
+    padding: 1.25rem 1rem;
+    max-height: 90vh;
+    border-radius: var(--radius-lg);
+  }
+
+  /* Prevent iOS auto-zoom on input focus */
+  input, textarea, select {
+    font-size: 16px;
+  }
+
+  /* Optimize tactile tap highlight */
+  * {
+    -webkit-tap-highlight-color: transparent;
+  }
+}
+

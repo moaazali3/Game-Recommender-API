@@ -1,11 +1,11 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useLanguage } from '../context/LanguageContext';
-import { fetchAllGames } from '../services/api';
+import { fetchAllGames, fetchLiveStats } from '../services/api';
 import { GameCard } from '../components/GameCard';
 import { SkeletonLoader } from '../components/SkeletonLoader';
 import { AiSummaryModal } from '../components/AiSummaryModal';
-import { Database, Search, ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, SlidersHorizontal, AlertCircle } from 'lucide-react';
+import { Database, Search, ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, SlidersHorizontal, AlertCircle, Activity, Terminal, CheckCircle, RefreshCw, ChevronDown, ChevronUp } from 'lucide-react';
 
 export const Library = () => {
   const { t, isRTL } = useLanguage();
@@ -15,6 +15,10 @@ export const Library = () => {
   const [totalSaved, setTotalSaved] = useState(0);
   const [searchTerm, setSearchTerm] = useState('');
   
+  // Live Stats State
+  const [liveStats, setLiveStats] = useState(null);
+  const [showLogs, setShowLogs] = useState(false);
+
   // Pagination State
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(24);
@@ -41,6 +45,24 @@ export const Library = () => {
         setError(err.message || 'Failed to load game library');
         setLoading(false);
       });
+  }, []);
+
+  // Poll live stats every 3.5 seconds
+  useEffect(() => {
+    const updateStats = () => {
+      fetchLiveStats()
+        .then(data => {
+          setLiveStats(data);
+          if (data.TotalGamesInDatabase) {
+            setTotalSaved(data.TotalGamesInDatabase);
+          }
+        })
+        .catch(() => {});
+    };
+
+    updateStats();
+    const interval = setInterval(updateStats, 3500);
+    return () => clearInterval(interval);
   }, []);
 
   // Filter games based on search term
@@ -111,6 +133,58 @@ export const Library = () => {
           {t('library_subtitle')}
         </p>
 
+        {/* Live Seeder Status & Real-Time Console Bar */}
+        {liveStats && (
+          <div className="live-monitor-card">
+            <div className="live-monitor-header" onClick={() => setShowLogs(!showLogs)}>
+              <div className="live-monitor-status-cluster">
+                <span className={`status-dot ${liveStats.IsSeedingRunning ? 'status-dot--active' : 'status-dot--idle'}`} />
+                <span className="status-label">
+                  {liveStats.IsSeedingRunning 
+                    ? `جاري السحب والتحليل (صفحة ${liveStats.CurrentPage}) : ${liveStats.CurrentGame || 'فحص...'}` 
+                    : 'السحب في الخلفية جاهز / متوقف مؤقتاً'}
+                </span>
+                {liveStats.AddedInCurrentPage > 0 && (
+                  <span className="added-badge">+{liveStats.AddedInCurrentPage} لعبة جديدة بالصفحة</span>
+                )}
+              </div>
+
+              <div className="live-monitor-actions">
+                <div className="total-live-badge">
+                  <Database size={13} />
+                  <span>{liveStats.TotalGamesInDatabase.toLocaleString()} لعبة مسجلة</span>
+                </div>
+                <button type="button" className="toggle-logs-btn">
+                  <Terminal size={14} />
+                  <span>{showLogs ? 'إخفاء الـ Logs' : 'عرض الـ Logs'}</span>
+                  {showLogs ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
+                </button>
+              </div>
+            </div>
+
+            {/* Expandable Terminal Logs */}
+            {showLogs && (
+              <div className="live-logs-terminal">
+                <div className="logs-terminal-title">
+                  <Terminal size={12} />
+                  <span>Live Seeding Activity Logs (Real-Time)</span>
+                </div>
+                <div className="logs-list-scroll">
+                  {liveStats.RecentLogs && liveStats.RecentLogs.length > 0 ? (
+                    liveStats.RecentLogs.map((log, idx) => (
+                      <div key={idx} className="log-entry-line">
+                        {log}
+                      </div>
+                    ))
+                  ) : (
+                    <div className="log-entry-line muted">لا توجد عمليات مسجلة حتى الآن.</div>
+                  )}
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+
         {/* Database Search Filter & Controls */}
         <div className="library-toolbar">
           <div className="library-search-box">
@@ -128,7 +202,7 @@ export const Library = () => {
           <div className="library-controls-group">
             <div className="library-counter-badge">
               <span className="counter-label">{t('total_games_label')}:</span>
-              <span className="counter-value">{totalSaved}</span>
+              <span className="counter-value">{totalSaved.toLocaleString()}</span>
             </div>
 
             <div className="page-size-selector">
@@ -202,7 +276,7 @@ export const Library = () => {
                 {/* First Page */}
                 <button
                   type="button"
-                  className="pagination-btn pagination-nav-btn"
+                  className="pagination-btn pagination-nav-btn pagination-nav-first"
                   onClick={() => handlePageChange(1)}
                   disabled={currentPage === 1}
                   title="First Page"
@@ -227,7 +301,7 @@ export const Library = () => {
                     <button
                       key={num}
                       type="button"
-                      className={`pagination-btn pagination-num-btn ${num === currentPage ? 'pagination-btn--active' : ''}`}
+                      className={`pagination-btn ${num === currentPage ? 'pagination-btn--active' : ''}`}
                       onClick={() => handlePageChange(num)}
                     >
                       {num}
@@ -249,7 +323,7 @@ export const Library = () => {
                 {/* Last Page */}
                 <button
                   type="button"
-                  className="pagination-btn pagination-nav-btn"
+                  className="pagination-btn pagination-nav-btn pagination-nav-last"
                   onClick={() => handlePageChange(totalPages)}
                   disabled={currentPage === totalPages}
                   title="Last Page"
@@ -282,8 +356,159 @@ export const Library = () => {
           align-items: center;
           text-align: center;
           padding: 3rem 1rem 2.5rem;
-          max-width: 860px;
+          max-width: 920px;
           margin: 0 auto;
+          width: 100%;
+        }
+
+        .live-monitor-card {
+          width: 100%;
+          background: rgba(15, 20, 31, 0.85);
+          border: 1px solid rgba(244, 63, 94, 0.3);
+          border-radius: var(--radius-xl);
+          padding: 0.85rem 1.25rem;
+          margin-bottom: 1.5rem;
+          backdrop-filter: blur(12px);
+          box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+          transition: all var(--transition-normal);
+        }
+
+        .live-monitor-header {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          gap: 1rem;
+          cursor: pointer;
+          user-select: none;
+          flex-wrap: wrap;
+        }
+
+        .live-monitor-status-cluster {
+          display: flex;
+          align-items: center;
+          gap: 0.65rem;
+          font-size: 0.88rem;
+          font-weight: 600;
+          color: var(--text-primary);
+        }
+
+        .status-dot {
+          width: 10px;
+          height: 10px;
+          border-radius: var(--radius-full);
+          flex-shrink: 0;
+        }
+
+        .status-dot--active {
+          background: #10b981;
+          box-shadow: 0 0 10px #10b981, 0 0 20px #10b981;
+          animation: pulseGreen 1.5s infinite;
+        }
+
+        @keyframes pulseGreen {
+          0%, 100% { opacity: 1; transform: scale(1); }
+          50% { opacity: 0.6; transform: scale(1.15); }
+        }
+
+        .status-dot--idle {
+          background: var(--text-muted);
+        }
+
+        .status-label {
+          color: var(--text-primary);
+          font-size: 0.86rem;
+        }
+
+        .added-badge {
+          background: rgba(16, 185, 129, 0.15);
+          border: 1px solid rgba(16, 185, 129, 0.35);
+          color: #10b981;
+          font-size: 0.74rem;
+          font-weight: 700;
+          padding: 0.15rem 0.5rem;
+          border-radius: var(--radius-full);
+        }
+
+        .live-monitor-actions {
+          display: flex;
+          align-items: center;
+          gap: 0.75rem;
+        }
+
+        .total-live-badge {
+          display: inline-flex;
+          align-items: center;
+          gap: 0.4rem;
+          background: rgba(244, 63, 94, 0.12);
+          border: 1px solid rgba(244, 63, 94, 0.3);
+          color: #fca5a5;
+          font-size: 0.82rem;
+          font-weight: 700;
+          padding: 0.35rem 0.75rem;
+          border-radius: var(--radius-full);
+        }
+
+        .toggle-logs-btn {
+          display: inline-flex;
+          align-items: center;
+          gap: 0.4rem;
+          background: rgba(255, 255, 255, 0.05);
+          border: 1px solid var(--border-subtle);
+          color: var(--text-secondary);
+          font-size: 0.8rem;
+          font-weight: 600;
+          padding: 0.35rem 0.75rem;
+          border-radius: var(--radius-full);
+          transition: all var(--transition-fast);
+        }
+
+        .toggle-logs-btn:hover {
+          background: rgba(255, 255, 255, 0.1);
+          color: var(--text-primary);
+        }
+
+        .live-logs-terminal {
+          margin-top: 0.85rem;
+          padding-top: 0.85rem;
+          border-top: 1px solid var(--border-subtle);
+          background: #090c12;
+          border-radius: var(--radius-md);
+          padding: 0.85rem 1rem;
+          border: 1px solid var(--border-medium);
+        }
+
+        .logs-terminal-title {
+          display: flex;
+          align-items: center;
+          gap: 0.4rem;
+          font-size: 0.74rem;
+          font-weight: 700;
+          text-transform: uppercase;
+          letter-spacing: 0.06em;
+          color: var(--text-muted);
+          margin-bottom: 0.65rem;
+        }
+
+        .logs-list-scroll {
+          max-height: 180px;
+          overflow-y: auto;
+          display: flex;
+          flex-direction: column;
+          gap: 0.35rem;
+          font-family: var(--font-mono);
+          font-size: 0.78rem;
+          text-align: left;
+          direction: ltr;
+        }
+
+        .log-entry-line {
+          color: #a7f3d0;
+          line-height: 1.4;
+          word-break: break-all;
+        }
+
+        .log-entry-line.muted {
+          color: var(--text-muted);
         }
 
         .library-toolbar {
@@ -457,6 +682,65 @@ export const Library = () => {
           display: flex;
           align-items: center;
           gap: 0.4rem;
+        }
+
+        @media (max-width: 640px) {
+          .library-hero {
+            padding: 2rem 0.5rem 1.25rem;
+          }
+          .hero-title {
+            font-size: 1.85rem;
+          }
+          .live-monitor-card {
+            padding: 1rem;
+          }
+          .live-monitor-header {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 0.75rem;
+          }
+          .live-monitor-status-cluster {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 0.4rem;
+          }
+          .live-monitor-actions {
+            width: 100%;
+            justify-content: space-between;
+          }
+          .library-toolbar {
+            flex-direction: column;
+            align-items: stretch;
+            gap: 0.75rem;
+          }
+          .library-search-box {
+            width: 100%;
+            min-width: 0;
+            padding: 0.6rem 1rem;
+          }
+          .library-controls-group {
+            width: 100%;
+            justify-content: space-between;
+          }
+          .library-grid {
+            grid-template-columns: 1fr;
+            gap: 1rem;
+          }
+          .pagination-bar {
+            gap: 0.25rem;
+            margin-top: 2rem;
+            padding: 1rem 0;
+          }
+          .pagination-btn {
+            min-width: 36px;
+            height: 36px;
+            font-size: 0.8rem;
+            padding: 0 0.35rem;
+          }
+          .pagination-nav-first,
+          .pagination-nav-last {
+            display: none;
+          }
         }
       `}</style>
     </div>

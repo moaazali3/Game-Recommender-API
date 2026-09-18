@@ -705,14 +705,61 @@ export const Series = () => {
         }
 
         @media (max-width: 640px) {
-          .timeline-entry-card {
+          .series-hero {
+            padding: 2rem 0.5rem 1.25rem;
+          }
+          .hero-title {
+            font-size: 1.85rem;
+          }
+          .series-search-box {
+            padding: 0.6rem 1rem;
+          }
+          .timeline-toolbar {
+            padding: 1rem;
             flex-direction: column;
             align-items: flex-start;
             gap: 0.75rem;
           }
+          .timeline-tree {
+            padding-left: 2rem;
+          }
+          [dir="rtl"] .timeline-tree {
+            padding-left: 0;
+            padding-right: 2rem;
+          }
+          .timeline-node-marker {
+            left: -2rem;
+            width: 30px;
+            height: 30px;
+            font-size: 0.75rem;
+          }
+          [dir="rtl"] .timeline-node-marker {
+            left: auto;
+            right: -2rem;
+          }
+          .timeline-spine-line {
+            left: 14px;
+          }
+          [dir="rtl"] .timeline-spine-line {
+            left: auto;
+            right: 14px;
+          }
+          .timeline-entry-card {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 0.75rem;
+            padding: 0.85rem 1rem;
+          }
           .timeline-card-image-wrap {
             width: 100%;
             aspect-ratio: 460 / 215;
+          }
+          .popular-series-pills {
+            gap: 0.35rem;
+          }
+          .series-quick-pill {
+            font-size: 0.8rem;
+            padding: 0.4rem 0.75rem;
           }
         }
       `}</style>

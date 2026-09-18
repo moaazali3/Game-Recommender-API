@@ -51,6 +51,13 @@ export const fetchAllGames = async () => {
   return await response.json();
 };
 
+/** Get live database stats and seeding progress */
+export const fetchLiveStats = async () => {
+  const response = await fetch(`${API_BASE}/Recommendations/stats`);
+  if (!response.ok) throw new Error('Failed to load stats');
+  return await response.json();
+};
+
 /** Get AI review breakdown summary from Groq AI */
 export const fetchAiSummary = async (appId, lang = 'en') => {
   const response = await fetch(`${API_BASE}/reviews/${appId}/ai-summary?lang=${lang}`);
