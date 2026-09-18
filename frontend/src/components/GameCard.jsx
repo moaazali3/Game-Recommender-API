@@ -26,22 +26,37 @@ export const GameCard = ({ game, onSelectSimilar, onOpenAiSummary, isLibrary = f
     tagsList = rawTags;
   }
 
-  // Determine Match Score Badge Color Class
+  // Determine Match Score Badge Color Class (Calibrated for ML 56% ceiling)
   let scoreClass = 'score-badge--low';
+  let scoreTooltip = '';
+
   if (similarityScore != null) {
     if (similarityScore >= 50) {
-      scoreClass = 'score-badge--high';
+      // 50% - 56%+ : Top Tier Match (The practical peak of this model)
+      scoreClass = 'score-badge--elite';
+      scoreTooltip = `Top Match (${similarityScore}%)`;
     } else if (similarityScore >= 45) {
+      // 45% - 49.9% : High Match
+      scoreClass = 'score-badge--high';
+      scoreTooltip = `High Match (${similarityScore}%)`;
+    } else if (similarityScore >= 40) {
+      // 40% - 44.9% : Good Match
       scoreClass = 'score-badge--mid';
+      scoreTooltip = `Good Match (${similarityScore}%)`;
     } else {
+      // < 40% : Moderate Match
       scoreClass = 'score-badge--low';
+      scoreTooltip = `Similar (${similarityScore}%)`;
     }
   } else {
-    if (score >= 8) {
+    if (score >= 15) {
+      scoreClass = 'score-badge--elite';
+    } else if (score >= 8) {
       scoreClass = 'score-badge--high';
     } else if (score >= 4) {
       scoreClass = 'score-badge--mid';
     }
+    scoreTooltip = `${t('match_score')}: ${score}`;
   }
 
   const coverUrl = imgError || !appId
@@ -64,7 +79,7 @@ export const GameCard = ({ game, onSelectSimilar, onOpenAiSummary, isLibrary = f
         {!isLibrary && (similarityScore != null || score > 0) && (
           <div
             className={`game-card-score-badge ${scoreClass}`}
-            title={similarityScore != null ? `ML Similarity: ${similarityScore}%` : `${t('match_score')}: ${score}`}
+            title={scoreTooltip}
           >
             <span>{similarityScore != null ? `${similarityScore}%` : score}</span>
             <span style={{ fontSize: '0.65rem', opacity: 0.85 }}>{similarityScore != null ? 'match' : 'pts'}</span>
