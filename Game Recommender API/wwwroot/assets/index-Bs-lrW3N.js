@@ -249,12 +249,15 @@ Please change the parent <Route path="${e}"> to <Route path="${e===`/`?`*`:`${e}
             font-size: 0.62rem;
           }
         }
-      `})]})},oi=c(m(),1),si=({isOpen:e,onClose:t})=>{let{t:n}=Xn();if(!e)return null;let r=[{icon:(0,M.jsx)(Nr,{size:20}),title:n(`about_feat_ml_title`),desc:n(`about_feat_ml_desc`),gradient:`linear-gradient(135deg, rgba(6, 182, 212, 0.15), rgba(6, 182, 212, 0.05))`,color:`#06b6d4`},{icon:(0,M.jsx)(ii,{size:20}),title:n(`about_feat_warmup_title`),desc:n(`about_feat_warmup_desc`),gradient:`linear-gradient(135deg, rgba(234, 179, 8, 0.15), rgba(234, 179, 8, 0.05))`,color:`#eab308`},{icon:(0,M.jsx)(Ir,{size:20}),title:n(`about_feat_fusion_title`),desc:n(`about_feat_fusion_desc`),gradient:`linear-gradient(135deg, rgba(168, 85, 247, 0.15), rgba(168, 85, 247, 0.05))`,color:`#a855f7`}];return(0,oi.createPortal)((0,M.jsxs)(`div`,{className:`modal-backdrop`,onClick:t,children:[(0,M.jsxs)(`div`,{className:`modal-surface about-modal-surface`,onClick:e=>e.stopPropagation(),children:[(0,M.jsx)(`button`,{type:`button`,className:`modal-close-btn`,onClick:t,"aria-label":`Close modal`,children:(0,M.jsx)(ri,{size:20})}),(0,M.jsxs)(`div`,{className:`about-header`,children:[(0,M.jsx)(`div`,{className:`about-icon-box`,children:(0,M.jsx)(Zr,{size:24})}),(0,M.jsxs)(`div`,{children:[(0,M.jsx)(`h2`,{className:`heading-display about-title`,children:n(`about_modal_title`)}),(0,M.jsx)(`p`,{className:`about-subtitle`,children:n(`about_subtitle`)})]})]}),(0,M.jsxs)(`div`,{className:`about-body`,children:[(0,M.jsx)(`p`,{className:`about-paragraph`,children:n(`about_p1`)}),(0,M.jsx)(`p`,{className:`about-paragraph`,children:n(`about_p2`)}),(0,M.jsx)(`div`,{className:`about-features-list`,children:r.map((e,t)=>(0,M.jsxs)(`div`,{className:`about-feature-item`,style:{background:e.gradient},children:[(0,M.jsx)(`div`,{className:`about-feature-icon`,style:{color:e.color,borderColor:`${e.color}40`},children:e.icon}),(0,M.jsxs)(`div`,{className:`about-feature-content`,children:[(0,M.jsx)(`h4`,{className:`about-feature-title`,style:{color:e.color},children:e.title}),(0,M.jsx)(`p`,{className:`about-feature-desc`,children:e.desc})]})]},t))}),(0,M.jsxs)(`div`,{className:`about-team-section`,children:[(0,M.jsxs)(`div`,{className:`about-team-heading`,children:[(0,M.jsx)(ni,{size:18,className:`team-heading-icon`}),(0,M.jsx)(`h3`,{className:`about-team-title`,children:n(`about_team_title`)})]}),(0,M.jsxs)(`div`,{className:`about-team-grid`,children:[(0,M.jsxs)(`div`,{className:`team-member-card moaaz-card`,children:[(0,M.jsxs)(`div`,{className:`team-member-header`,children:[(0,M.jsx)(`div`,{className:`team-avatar-box moaaz-avatar`,children:(0,M.jsx)(jr,{size:22})}),(0,M.jsxs)(`div`,{className:`team-header-info`,children:[(0,M.jsx)(`h4`,{className:`member-name highlight-amber`,children:n(`about_dev1_name`)}),(0,M.jsx)(`span`,{className:`member-role`,children:n(`about_dev1_role`)})]})]}),(0,M.jsx)(`p`,{className:`member-desc`,children:n(`about_dev1_desc`)})]}),(0,M.jsxs)(`div`,{className:`team-member-card abdallah-card`,children:[(0,M.jsxs)(`div`,{className:`team-member-header`,children:[(0,M.jsx)(`div`,{className:`team-avatar-box abdallah-avatar`,children:(0,M.jsx)(Nr,{size:22})}),(0,M.jsxs)(`div`,{className:`team-header-info`,children:[(0,M.jsxs)(`div`,{className:`member-name-row`,children:[(0,M.jsx)(`h4`,{className:`member-name highlight-cyan`,children:n(`about_dev2_name`)}),(0,M.jsx)(`a`,{href:`https://www.linkedin.com/in/abdallahabukhalil/`,target:`_blank`,rel:`noopener noreferrer`,className:`member-social-link`,"aria-label":n(`about_view_linkedin`),title:n(`about_view_linkedin`),children:(0,M.jsx)(Fr,{size:14})})]}),(0,M.jsx)(`span`,{className:`member-role ml-badge`,children:n(`about_dev2_role`)})]})]}),(0,M.jsx)(`p`,{className:`member-desc`,children:n(`about_dev2_desc`)})]})]})]})]})]}),(0,M.jsx)(`style`,{children:`
+      `})]})},oi=c(m(),1),si=({isOpen:e,onClose:t})=>{let{t:n}=Xn();if((0,x.useEffect)(()=>{if(!e)return;let t=document.body.style.overflow;return document.body.style.overflow=`hidden`,()=>{document.body.style.overflow=t}},[e]),!e)return null;let r=[{icon:(0,M.jsx)(Nr,{size:20}),title:n(`about_feat_ml_title`),desc:n(`about_feat_ml_desc`),gradient:`linear-gradient(135deg, rgba(6, 182, 212, 0.15), rgba(6, 182, 212, 0.05))`,color:`#06b6d4`},{icon:(0,M.jsx)(ii,{size:20}),title:n(`about_feat_warmup_title`),desc:n(`about_feat_warmup_desc`),gradient:`linear-gradient(135deg, rgba(234, 179, 8, 0.15), rgba(234, 179, 8, 0.05))`,color:`#eab308`},{icon:(0,M.jsx)(Ir,{size:20}),title:n(`about_feat_fusion_title`),desc:n(`about_feat_fusion_desc`),gradient:`linear-gradient(135deg, rgba(168, 85, 247, 0.15), rgba(168, 85, 247, 0.05))`,color:`#a855f7`}];return(0,oi.createPortal)((0,M.jsxs)(`div`,{className:`modal-backdrop`,onClick:t,children:[(0,M.jsxs)(`div`,{className:`modal-surface about-modal-surface`,onClick:e=>e.stopPropagation(),children:[(0,M.jsx)(`button`,{type:`button`,className:`modal-close-btn`,onClick:t,"aria-label":`Close modal`,children:(0,M.jsx)(ri,{size:20})}),(0,M.jsxs)(`div`,{className:`about-header`,children:[(0,M.jsx)(`div`,{className:`about-icon-box`,children:(0,M.jsx)(Zr,{size:22})}),(0,M.jsxs)(`div`,{children:[(0,M.jsx)(`h2`,{className:`heading-display about-title`,children:n(`about_modal_title`)}),(0,M.jsx)(`p`,{className:`about-subtitle`,children:n(`about_subtitle`)})]})]}),(0,M.jsxs)(`div`,{className:`about-body`,children:[(0,M.jsx)(`p`,{className:`about-paragraph`,children:n(`about_p1`)}),(0,M.jsx)(`p`,{className:`about-paragraph`,children:n(`about_p2`)}),(0,M.jsx)(`div`,{className:`about-features-list`,children:r.map((e,t)=>(0,M.jsxs)(`div`,{className:`about-feature-item`,style:{background:e.gradient},children:[(0,M.jsx)(`div`,{className:`about-feature-icon`,style:{color:e.color,borderColor:`${e.color}40`},children:e.icon}),(0,M.jsxs)(`div`,{className:`about-feature-content`,children:[(0,M.jsx)(`h4`,{className:`about-feature-title`,style:{color:e.color},children:e.title}),(0,M.jsx)(`p`,{className:`about-feature-desc`,children:e.desc})]})]},t))}),(0,M.jsxs)(`div`,{className:`about-team-section`,children:[(0,M.jsxs)(`div`,{className:`about-team-heading`,children:[(0,M.jsx)(ni,{size:18,className:`team-heading-icon`}),(0,M.jsx)(`h3`,{className:`about-team-title`,children:n(`about_team_title`)})]}),(0,M.jsxs)(`div`,{className:`about-team-list`,children:[(0,M.jsxs)(`div`,{className:`team-member-card moaaz-card`,children:[(0,M.jsxs)(`div`,{className:`team-member-header`,children:[(0,M.jsx)(`div`,{className:`team-avatar-box moaaz-avatar`,children:(0,M.jsx)(jr,{size:20})}),(0,M.jsxs)(`div`,{className:`team-header-info`,children:[(0,M.jsx)(`div`,{className:`member-name-row`,children:(0,M.jsx)(`h4`,{className:`member-name highlight-amber`,children:n(`about_dev1_name`)})}),(0,M.jsx)(`span`,{className:`member-role`,children:n(`about_dev1_role`)})]})]}),(0,M.jsx)(`p`,{className:`member-desc`,children:n(`about_dev1_desc`)})]}),(0,M.jsxs)(`div`,{className:`team-member-card abdallah-card`,children:[(0,M.jsxs)(`div`,{className:`team-member-header`,children:[(0,M.jsx)(`div`,{className:`team-avatar-box abdallah-avatar`,children:(0,M.jsx)(Nr,{size:20})}),(0,M.jsxs)(`div`,{className:`team-header-info`,children:[(0,M.jsxs)(`div`,{className:`member-name-row`,children:[(0,M.jsx)(`h4`,{className:`member-name highlight-cyan`,children:n(`about_dev2_name`)}),(0,M.jsx)(`a`,{href:`https://www.linkedin.com/in/abdallahabukhalil/`,target:`_blank`,rel:`noopener noreferrer`,className:`member-social-link`,"aria-label":n(`about_view_linkedin`),title:n(`about_view_linkedin`),children:(0,M.jsx)(Fr,{size:13})})]}),(0,M.jsx)(`span`,{className:`member-role ml-badge`,children:n(`about_dev2_role`)})]})]}),(0,M.jsx)(`p`,{className:`member-desc`,children:n(`about_dev2_desc`)})]})]})]})]})]}),(0,M.jsx)(`style`,{children:`
         .about-modal-surface {
-          max-width: 680px;
-          max-height: 88vh;
+          max-width: 580px;
+          width: 100%;
+          max-height: 85vh;
           overflow-y: auto;
+          overflow-x: hidden;
           scrollbar-width: thin;
+          box-sizing: border-box;
         }
 
         .about-header {
@@ -264,11 +267,13 @@ Please change the parent <Route path="${e}"> to <Route path="${e===`/`?`*`:`${e}
           margin-bottom: 1.25rem;
           padding-bottom: 1.15rem;
           border-bottom: 1px solid var(--border-subtle);
+          width: 100%;
+          box-sizing: border-box;
         }
 
         .about-icon-box {
-          width: 48px;
-          height: 48px;
+          width: 44px;
+          height: 44px;
           border-radius: var(--radius-md);
           background: linear-gradient(135deg, #f43f5e, #be123c);
           color: #ffffff;
@@ -276,16 +281,18 @@ Please change the parent <Route path="${e}"> to <Route path="${e===`/`?`*`:`${e}
           align-items: center;
           justify-content: center;
           flex-shrink: 0;
-          box-shadow: 0 0 20px rgba(244, 63, 94, 0.4);
+          box-shadow: 0 0 20px rgba(244, 63, 94, 0.35);
         }
 
         .about-title {
-          font-size: 1.35rem;
+          font-size: 1.3rem;
           color: var(--text-primary);
+          line-height: 1.3;
+          margin: 0;
         }
 
         .about-subtitle {
-          font-size: 0.82rem;
+          font-size: 0.8rem;
           color: var(--accent-amber);
           font-family: var(--font-mono);
           margin-top: 0.2rem;
@@ -296,19 +303,27 @@ Please change the parent <Route path="${e}"> to <Route path="${e===`/`?`*`:`${e}
           display: flex;
           flex-direction: column;
           gap: 1.15rem;
+          width: 100%;
+          max-width: 100%;
+          overflow-x: hidden;
+          box-sizing: border-box;
         }
 
         .about-paragraph {
-          font-size: 0.93rem;
+          font-size: 0.92rem;
           color: var(--text-secondary);
           line-height: 1.65;
+          word-break: break-word;
+          overflow-wrap: break-word;
+          margin: 0;
         }
 
         .about-features-list {
           display: flex;
           flex-direction: column;
           gap: 0.75rem;
-          margin: 0.25rem 0;
+          width: 100%;
+          box-sizing: border-box;
         }
 
         .about-feature-item {
@@ -319,6 +334,9 @@ Please change the parent <Route path="${e}"> to <Route path="${e===`/`?`*`:`${e}
           border-radius: var(--radius-md);
           border: 1px solid rgba(255, 255, 255, 0.07);
           backdrop-filter: blur(8px);
+          width: 100%;
+          box-sizing: border-box;
+          min-width: 0;
         }
 
         .about-feature-icon {
@@ -338,12 +356,15 @@ Please change the parent <Route path="${e}"> to <Route path="${e===`/`?`*`:`${e}
           display: flex;
           flex-direction: column;
           gap: 0.25rem;
+          flex: 1;
+          min-width: 0;
         }
 
         .about-feature-title {
           font-size: 0.92rem;
           font-weight: 700;
           margin: 0;
+          word-break: break-word;
         }
 
         .about-feature-desc {
@@ -351,6 +372,7 @@ Please change the parent <Route path="${e}"> to <Route path="${e===`/`?`*`:`${e}
           color: var(--text-muted);
           line-height: 1.5;
           margin: 0;
+          word-break: break-word;
         }
 
         /* Team Section */
@@ -358,9 +380,11 @@ Please change the parent <Route path="${e}"> to <Route path="${e===`/`?`*`:`${e}
           display: flex;
           flex-direction: column;
           gap: 0.85rem;
-          margin-top: 0.5rem;
+          margin-top: 0.25rem;
           padding-top: 1rem;
           border-top: 1px solid var(--border-subtle);
+          width: 100%;
+          box-sizing: border-box;
         }
 
         .about-team-heading {
@@ -374,27 +398,32 @@ Please change the parent <Route path="${e}"> to <Route path="${e===`/`?`*`:`${e}
         }
 
         .about-team-title {
-          font-size: 1rem;
+          font-size: 0.98rem;
           font-weight: 700;
           color: var(--text-primary);
           margin: 0;
         }
 
-        .about-team-grid {
-          display: grid;
-          grid-template-columns: repeat(2, 1fr);
-          gap: 0.85rem;
+        .about-team-list {
+          display: flex;
+          flex-direction: column;
+          gap: 0.75rem;
+          width: 100%;
+          box-sizing: border-box;
         }
 
         .team-member-card {
           background: rgba(255, 255, 255, 0.025);
           border: 1px solid var(--border-subtle);
           border-radius: var(--radius-lg);
-          padding: 1.1rem;
+          padding: 1rem 1.15rem;
           display: flex;
           flex-direction: column;
-          gap: 0.75rem;
+          gap: 0.65rem;
           transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+          width: 100%;
+          box-sizing: border-box;
+          min-width: 0;
         }
 
         .team-member-card:hover {
@@ -423,8 +452,10 @@ Please change the parent <Route path="${e}"> to <Route path="${e===`/`?`*`:`${e}
 
         .team-member-header {
           display: flex;
-          align-items: flex-start;
+          align-items: center;
           gap: 0.85rem;
+          width: 100%;
+          min-width: 0;
         }
 
         .team-avatar-box {
@@ -452,7 +483,7 @@ Please change the parent <Route path="${e}"> to <Route path="${e===`/`?`*`:`${e}
         .team-header-info {
           display: flex;
           flex-direction: column;
-          gap: 0.25rem;
+          gap: 0.2rem;
           min-width: 0;
           flex: 1;
         }
@@ -462,6 +493,8 @@ Please change the parent <Route path="${e}"> to <Route path="${e===`/`?`*`:`${e}
           align-items: center;
           gap: 0.5rem;
           justify-content: space-between;
+          width: 100%;
+          min-width: 0;
         }
 
         .member-name {
@@ -470,9 +503,8 @@ Please change the parent <Route path="${e}"> to <Route path="${e===`/`?`*`:`${e}
           font-weight: 800;
           margin: 0;
           letter-spacing: -0.01em;
-          white-space: nowrap;
-          overflow: hidden;
-          text-overflow: ellipsis;
+          word-break: break-word;
+          overflow-wrap: break-word;
         }
 
         .highlight-cyan {
@@ -506,6 +538,7 @@ Please change the parent <Route path="${e}"> to <Route path="${e===`/`?`*`:`${e}
           font-weight: 600;
           color: var(--accent-amber);
           line-height: 1.35;
+          word-break: break-word;
         }
 
         .member-role.ml-badge {
@@ -515,24 +548,21 @@ Please change the parent <Route path="${e}"> to <Route path="${e===`/`?`*`:`${e}
         .member-desc {
           font-size: 0.82rem;
           color: var(--text-secondary);
-          line-height: 1.5;
+          line-height: 1.55;
           margin: 0;
+          word-break: break-word;
+          overflow-wrap: break-word;
         }
 
         @media (max-width: 640px) {
           .about-modal-surface {
-            max-width: 95vw;
+            max-width: 100%;
             padding: 1.25rem 1rem;
-          }
-          .about-features-list {
-            gap: 0.6rem;
+            max-height: 88vh;
           }
           .about-feature-item {
             flex-direction: column;
             gap: 0.5rem;
-          }
-          .about-team-grid {
-            grid-template-columns: 1fr;
           }
         }
       `})]}),document.body)},ci=()=>{let{pathname:e}=_t();return(0,x.useEffect)(()=>{window.scrollTo(0,0)},[e]),null},li=({children:e})=>(0,M.jsx)(`div`,{className:`page-container`,children:e}),ui=`ludova_recent_searches`,di=6,fi=()=>{let[e,t]=(0,x.useState)(()=>{try{let e=localStorage.getItem(ui);return e?JSON.parse(e):[]}catch{return[]}});return(0,x.useEffect)(()=>{try{localStorage.setItem(ui,JSON.stringify(e))}catch(e){console.warn(`Failed to persist recent searches`,e)}},[e]),{recentSearches:e,addSearch:e=>{if(!e||typeof e!=`string`)return;let n=e.trim();n&&t(e=>{let t=e.filter(e=>e.toLowerCase()!==n.toLowerCase());return[n,...t].slice(0,di)})},removeSearch:e=>{t(t=>t.filter(t=>t!==e))},clearSearches:()=>{t([])}}},pi=e=>{let[t,n]=(0,x.useState)(`rgba(244, 63, 94, 0.15)`);return(0,x.useEffect)(()=>{if(!e){n(`rgba(244, 63, 94, 0.15)`);return}let t=new Image;t.crossOrigin=`Anonymous`,t.src=e,t.onload=()=>{try{let e=document.createElement(`canvas`),r=e.getContext(`2d`);e.width=16,e.height=16,r.drawImage(t,0,0,16,16);let i=r.getImageData(0,0,16,16).data,a=0,o=0,s=0,c=0;for(let e=0;e<i.length;e+=4){let t=i[e],n=i[e+1],r=i[e+2],l=(t+n+r)/3;l>30&&l<220&&(a+=t,o+=n,s+=r,c++)}c>0&&(a=Math.round(a/c),o=Math.round(o/c),s=Math.round(s/c),n(`rgba(${a}, ${o}, ${s}, 0.25)`))}catch{n(`rgba(244, 63, 94, 0.18)`)}},t.onerror=()=>{n(`rgba(244, 63, 94, 0.15)`)}},[e]),t},mi=({targetGameName:e,targetAppId:t,hasSeries:n,seriesId:r,onOpenAiSummary:i})=>{let{t:a}=Xn(),[o,s]=(0,x.useState)(!1),[c,l]=(0,x.useState)(!1),u=t&&!c?Qn(t):null,d=pi(u);return(0,M.jsxs)(`section`,{className:`target-banner-root`,style:{boxShadow:`0 20px 50px -15px ${d}, var(--shadow-md)`,borderColor:d.replace(`0.25`,`0.4`).replace(`0.15`,`0.3`)},children:[(0,M.jsx)(`div`,{className:`target-banner-aura`,style:{background:`radial-gradient(circle at 20% 50%, ${d}, transparent 70%)`}}),(0,M.jsxs)(`div`,{className:`target-banner-layout`,children:[(0,M.jsx)(`div`,{className:`target-banner-cover-wrap`,children:u?(0,M.jsx)(`img`,{src:u,alt:e,className:`target-banner-cover-img`,onError:()=>l(!0)}):(0,M.jsx)(`div`,{className:`target-banner-cover-placeholder`,children:(0,M.jsx)(`span`,{children:e.slice(0,2).toUpperCase()})})}),(0,M.jsxs)(`div`,{className:`target-banner-info`,children:[(0,M.jsxs)(`div`,{className:`target-badge-row`,children:[(0,M.jsx)(`span`,{className:`target-pill`,children:a(`target_badge`)}),t&&(0,M.jsxs)(`span`,{className:`target-appid-pill`,children:[`Steam ID: `,t]})]}),(0,M.jsx)(`h2`,{className:`target-game-title heading-display`,children:e}),(0,M.jsxs)(`div`,{className:`target-actions-row`,children:[t&&(0,M.jsxs)(`button`,{type:`button`,className:`btn btn-ai`,onClick:()=>i(t,e),children:[(0,M.jsx)(Zr,{size:16}),(0,M.jsx)(`span`,{children:a(`ai_summary_btn`)})]}),n&&r&&(0,M.jsxs)(Mn,{to:`/series?id=${r}`,className:`btn btn-secondary`,children:[(0,M.jsx)(Ir,{size:16}),(0,M.jsx)(`span`,{children:a(`view_series`)})]}),t&&(0,M.jsxs)(`a`,{href:`https://store.steampowered.com/app/${t}`,target:`_blank`,rel:`noopener noreferrer`,className:`btn btn-steam-prominent`,style:{padding:`0.65rem 1.15rem`},children:[(0,M.jsx)(Fr,{size:16}),(0,M.jsx)(`span`,{children:a(`view_steam`)})]}),(0,M.jsxs)(`button`,{type:`button`,className:`btn btn-ghost`,onClick:()=>{let t=`${window.location.origin}/?search=${encodeURIComponent(e)}`;navigator.clipboard.writeText(t).then(()=>{s(!0),setTimeout(()=>s(!1),2500)})},title:a(`share_results`),children:[o?(0,M.jsx)(Sr,{size:16,color:`var(--score-emerald)`}):(0,M.jsx)(Jr,{size:16}),(0,M.jsx)(`span`,{children:a(o?`link_copied`:`share_results`)})]})]})]})]}),(0,M.jsx)(`style`,{children:`
