@@ -26,35 +26,49 @@ export const GameCard = ({ game, onSelectSimilar, onOpenAiSummary, isLibrary = f
     tagsList = rawTags;
   }
 
-  // Determine Match Score Badge Color Class (Calibrated for ML 56% ceiling)
-  let scoreClass = 'score-badge--low';
+  // Determine Match Score Badge Color Class based on user's exact tiers
+  let scoreClass = 'score-badge--fair';
   let scoreTooltip = '';
 
   if (similarityScore != null) {
-    if (similarityScore >= 50) {
-      // 50% - 56%+ : Top Tier Match (The practical peak of this model)
-      scoreClass = 'score-badge--elite';
+    if (similarityScore >= 60) {
+      // Tier 1: 60%+ (Mythic / Ultra Rare - Radiant Gold)
+      scoreClass = 'score-badge--mythic';
+      scoreTooltip = `Mythic Match (${similarityScore}%)`;
+    } else if (similarityScore >= 55) {
+      // Tier 2: 55% - 59.9% (Legendary / Model Peak - Emerald Green)
+      scoreClass = 'score-badge--legendary';
+      scoreTooltip = `Peak Match (${similarityScore}%)`;
+    } else if (similarityScore >= 50) {
+      // Tier 3: 50% - 54.9% (Epic / Very High - Electric Cyan)
+      scoreClass = 'score-badge--epic';
       scoreTooltip = `Top Match (${similarityScore}%)`;
     } else if (similarityScore >= 45) {
-      // 45% - 49.9% : High Match
-      scoreClass = 'score-badge--high';
-      scoreTooltip = `High Match (${similarityScore}%)`;
+      // Tier 4: 45% - 49.9% (Rare / Strong Match - Royal Purple)
+      scoreClass = 'score-badge--rare';
+      scoreTooltip = `Strong Match (${similarityScore}%)`;
     } else if (similarityScore >= 40) {
-      // 40% - 44.9% : Good Match
-      scoreClass = 'score-badge--mid';
+      // Tier 5: 40% - 44.9% (Good Match - Cobalt Blue)
+      scoreClass = 'score-badge--good';
       scoreTooltip = `Good Match (${similarityScore}%)`;
     } else {
-      // < 40% : Moderate Match
-      scoreClass = 'score-badge--low';
-      scoreTooltip = `Similar (${similarityScore}%)`;
+      // Tier 6: < 40% (Fair / Moderate Match - Cool Slate)
+      scoreClass = 'score-badge--fair';
+      scoreTooltip = `Similar Style (${similarityScore}%)`;
     }
   } else {
-    if (score >= 15) {
-      scoreClass = 'score-badge--elite';
-    } else if (score >= 8) {
-      scoreClass = 'score-badge--high';
-    } else if (score >= 4) {
-      scoreClass = 'score-badge--mid';
+    if (score >= 20) {
+      scoreClass = 'score-badge--mythic';
+    } else if (score >= 15) {
+      scoreClass = 'score-badge--legendary';
+    } else if (score >= 10) {
+      scoreClass = 'score-badge--epic';
+    } else if (score >= 6) {
+      scoreClass = 'score-badge--rare';
+    } else if (score >= 3) {
+      scoreClass = 'score-badge--good';
+    } else {
+      scoreClass = 'score-badge--fair';
     }
     scoreTooltip = `${t('match_score')}: ${score}`;
   }

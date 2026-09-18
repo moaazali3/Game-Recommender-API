@@ -105,8 +105,15 @@ const translations = {
     
     // About Modal
     about_modal_title: 'About Ludova Games',
-    about_p1: 'Ludova Games is a smart discovery platform built for gamers who want recommendations that truly fit their taste. Instead of relying on generic genres, it analyzes real Steam player reviews and deep gameplay tags to find titles with matching mechanics, atmosphere, and feeling.',
-    about_p2: 'You can search single games, mix multiple titles using Taste Fusion to discover cross-genre matches, and explore full Game Series in their true chronological story order.',
+    about_subtitle: 'v2.5 • AI Neural Recommendation Engine',
+    about_p1: 'Ludova Games is an intelligent discovery platform powered by advanced Machine Learning. Instead of relying on generic genres, our neural recommendation engine deeply analyzes Steam community reviews, gameplay tags, and player affinities to deliver spot-on matches for your favorite titles.',
+    about_p2: 'Explore single games with fine-tuned affinity tiers, blend multiple games using Taste Fusion, browse complete game series in their true story chronology, or get instant AI-powered Steam review summaries—all wrapped in a fast, fully mobile-responsive interface.',
+    about_feat_ml_title: 'Neural ML Recommendation Engine',
+    about_feat_ml_desc: 'Powered by Hugging Face deep learning embeddings and cosine similarity across thousands of indexed Steam titles.',
+    about_feat_warmup_title: 'Instant Warm-Up Architecture',
+    about_feat_warmup_desc: 'Smart background wake-up pings keep server models warm, ensuring lightning-fast recommendations without cold starts.',
+    about_feat_fusion_title: 'Taste Fusion & Franchise Timelines',
+    about_feat_fusion_desc: 'Blend multiple titles to discover hybrid gems, or navigate iconic franchises in chronological narrative order.',
     about_developer_title: 'Developed by',
     about_developer_name: 'Moaaz Ali Ali',
 
@@ -219,8 +226,15 @@ const translations = {
     
     // About Modal
     about_modal_title: 'عن موقع Ludova Games',
-    about_p1: 'موقع Ludova Games هو أداة ذكية صُممت للاعبين للعثور على ألعاب تناسب ذوقهم بدقة. بدلاً من التصنيفات العامة، يحلل الموقع مراجعات مجتمع Steam الحقيقية والكلمات المفتاحية لأسلوب اللعب ليرشح لك ألعاباً تشبه حقاً متعة ألعابك المفضلة.',
-    about_p2: 'يمكنك البحث عن لعبة مفردة، أو دمج أكثر من لعبة باستخدام ميزة (دمج الألعاب) لاكتشاف ألعاب تمزج بين عدة أساليب، أو تصفح سلاسل الألعاب بالترتيب الزمني الصحيح لأحداث القصة.',
+    about_subtitle: 'v2.5 • محرك ذكاء اصطناعي وتعلم آلي فائق الدقة',
+    about_p1: 'منصة Ludova Games هي أداة ذكية لاكتشاف الألعاب مدعومة بمحرك تعلم آلي (Machine Learning) متطور. بدلاً من الاعتماد على التصنيفات السطحية، يقوم نموذج الذكاء الاصطناعي بتحليل عميق لآلاف مراجعات مجتمع Steam الحقيقية وسلوك اللاعبين وميكانيكيات اللعب لترشيح ألعاب تشبه ذوقك الحقيقي بدقة متناهية.',
+    about_p2: 'يمكنك استكشاف ألعاب فردية بنظام تقييم التوافق المطور، أو دمج حتى 4 ألعاب بميزة (Taste Fusion) لاكتشاف ألعاب هجينة تجمع بين عوالمك المفضلة، أو تصفح سلاسل الألعاب بالترتيب الزمني الصحيح لأحداث القصة، بالإضافة لملخصات مراجعات اللاعبين الفورية — مع تجربة سلسة ومتوافقة بالكامل مع الهواتف الذكية.',
+    about_feat_ml_title: 'محرك تعلم آلي عصبي (Neural ML)',
+    about_feat_ml_desc: 'مدعوم بنماذج تعلّم آلي متقدمة على Hugging Face لحساب نسب التطابق والتشابه عبر تمثيل متجهي عميق.',
+    about_feat_warmup_title: 'معمارية الإيقاظ الذكي السريع',
+    about_feat_warmup_desc: 'إيقاظ تلقائي وتنبيه فوري في الخلفية لموديل الذكاء الاصطناعي لضمان سرعة الاستجابة وتفادي فترات الانتظار.',
+    about_feat_fusion_title: 'دمج الألعاب والسلاسل القصصية',
+    about_feat_fusion_desc: 'دمج أذواق ألعاب متعددة وتصفح تسلسل أجزاء السلاسل الكبرى بحسب أحداث القصة وتاريخ الإصدار.',
     about_developer_title: 'تم التطوير بواسطة',
     about_developer_name: 'معاذ علي علي (Moaaz Ali)',
 

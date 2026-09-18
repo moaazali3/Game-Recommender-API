@@ -280,29 +280,55 @@ img {
   left: 0.65rem;
 }
 
-/* Match Score Badge Tiers (Calibrated for ML 56% ceiling) */
-.score-badge--elite {
+/* Match Score Badge Tiers (Calibrated for ML 56% ceiling & custom intervals) */
+/* Tier 1: 60%+ (Mythic / Ultra Rare Match) */
+.score-badge--mythic {
+  background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+  border-color: #fde68a;
+  color: #ffffff;
+  box-shadow: 0 0 18px rgba(245, 158, 11, 0.65), 0 2px 10px rgba(0, 0, 0, 0.5);
+  animation: goldPulse 2s infinite ease-in-out;
+}
+
+@keyframes goldPulse {
+  0%, 100% { box-shadow: 0 0 16px rgba(245, 158, 11, 0.6), 0 2px 10px rgba(0, 0, 0, 0.5); }
+  50% { box-shadow: 0 0 24px rgba(251, 191, 36, 0.85), 0 2px 12px rgba(0, 0, 0, 0.6); }
+}
+
+/* Tier 2: 55% - 59.9% (Legendary / Model Peak Match) */
+.score-badge--legendary {
   background: linear-gradient(135deg, rgba(16, 185, 129, 0.95), rgba(5, 150, 105, 0.95));
-  border-color: rgba(52, 211, 153, 0.6);
+  border-color: rgba(52, 211, 153, 0.7);
   color: #ffffff;
-  box-shadow: 0 0 14px rgba(16, 185, 129, 0.4), 0 2px 10px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 0 15px rgba(16, 185, 129, 0.5), 0 2px 10px rgba(0, 0, 0, 0.5);
 }
 
-.score-badge--high {
+/* Tier 3: 50% - 54.9% (Epic / Very High Match) */
+.score-badge--epic {
   background: linear-gradient(135deg, rgba(6, 182, 212, 0.95), rgba(2, 132, 199, 0.95));
-  border-color: rgba(56, 189, 248, 0.6);
+  border-color: rgba(56, 189, 248, 0.7);
   color: #ffffff;
-  box-shadow: 0 0 12px rgba(6, 182, 212, 0.35), 0 2px 10px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 0 13px rgba(6, 182, 212, 0.4), 0 2px 10px rgba(0, 0, 0, 0.5);
 }
 
-.score-badge--mid {
-  background: linear-gradient(135deg, rgba(139, 92, 246, 0.92), rgba(99, 102, 241, 0.92));
-  border-color: rgba(167, 139, 250, 0.5);
+/* Tier 4: 45% - 49.9% (Rare / Strong Match) */
+.score-badge--rare {
+  background: linear-gradient(135deg, rgba(139, 92, 246, 0.95), rgba(124, 58, 237, 0.95));
+  border-color: rgba(167, 139, 250, 0.6);
   color: #ffffff;
-  box-shadow: 0 0 10px rgba(139, 92, 246, 0.3), 0 2px 10px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 0 11px rgba(139, 92, 246, 0.35), 0 2px 10px rgba(0, 0, 0, 0.5);
 }
 
-.score-badge--low {
+/* Tier 5: 40% - 44.9% (Notable / Good Match) */
+.score-badge--good {
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.92), rgba(37, 99, 235, 0.92));
+  border-color: rgba(96, 165, 250, 0.5);
+  color: #ffffff;
+  box-shadow: 0 0 9px rgba(59, 130, 246, 0.3), 0 2px 10px rgba(0, 0, 0, 0.5);
+}
+
+/* Tier 6: < 40% (Fair / Moderate Match) */
+.score-badge--fair {
   background: linear-gradient(135deg, rgba(71, 85, 105, 0.9), rgba(51, 65, 85, 0.9));
   border-color: rgba(148, 163, 184, 0.4);
   color: #f1f5f9;
