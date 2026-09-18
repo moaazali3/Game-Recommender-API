@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Routes, Route, useLocation } from 'react-router-dom';
+import { triggerMlWarmup } from './services/api';
 import { Navbar } from './components/Navbar';
 import { AboutModal } from './components/AboutModal';
 import { ScrollToTop } from './components/ScrollToTop';
@@ -14,6 +15,11 @@ import { NotFound } from './pages/NotFound';
 export const App = () => {
   const [isAboutOpen, setIsAboutOpen] = useState(false);
   const location = useLocation();
+
+  useEffect(() => {
+    // Proactively send a wake-up ping to Hugging Face ML Space container when user enters the site
+    triggerMlWarmup();
+  }, []);
 
   return (
     <div className="app-layout">

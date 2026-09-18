@@ -83,6 +83,18 @@ namespace Game_Recommender_API.Controllers
             });
         }
 
+        [HttpGet("warmup")]
+        public IActionResult WarmupMlSpace()
+        {
+            // Trigger ML Space wake-up in background with 30s timeout without blocking client
+            _ = Task.Run(async () =>
+            {
+                await _mlService.WarmUpAsync();
+            });
+
+            return Ok(new { status = "warmup_initiated" });
+        }
+
         [HttpGet("{appId}/style")]
         public async Task<IActionResult> GetGameStyle(string appId)
         {

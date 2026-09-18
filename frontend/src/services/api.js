@@ -11,6 +11,13 @@ export const getSteamImage = (appId) => {
   return `https://cdn.akamai.steamstatic.com/steam/apps/${appId}/header.jpg`;
 };
 
+/** Proactively ping backend to wake up Hugging Face Space ML container */
+export const triggerMlWarmup = () => {
+  try {
+    fetch(`${API_BASE}/Recommendations/warmup`).catch(() => {});
+  } catch {}
+};
+
 /** Get game recommendations by AppId or Game Name */
 export const fetchRecommendations = async (searchTerm) => {
   const encoded = encodeURIComponent(searchTerm.trim());
