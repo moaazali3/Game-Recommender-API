@@ -1,6 +1,7 @@
 using Game_Recommender_API.Data;
 using Game_Recommender_API.Models;
 using Microsoft.EntityFrameworkCore;
+using System.Net.Http.Headers;
 using System.Text.Json;
 
 namespace Game_Recommender_API.Services
@@ -24,11 +25,24 @@ namespace Game_Recommender_API.Services
             _dbContext = dbContext;
             _steamService = steamService;
             _logger = logger;
-            _endpointUrl = configuration["MlApi:BaseUrl"] 
-                ?? throw new InvalidOperationException("MlApi:BaseUrl configuration is missing.");
+
+            _endpointUrl = configuration["GameRecommenderUrl"]
+                ?? configuration["MlApi:BaseUrl"]
+                ?? throw new InvalidOperationException("GameRecommenderUrl configuration is missing.");
 
             // Set timeout to 30s to allow Hugging Face cold start container wake-up
             _httpClient.Timeout = TimeSpan.FromSeconds(30);
+
+            var token = configuration["GameRecommenderToken"]
+                ?? configuration["MlApi:ApiKey"]
+                ?? configuration["ApiKeys:MlApi"]
+                ?? configuration["MlApi:Token"];
+
+            if (!string.IsNullOrWhiteSpace(token))
+            {
+                _httpClient.DefaultRequestHeaders.Authorization =
+                    new AuthenticationHeaderValue("Bearer", token.Trim());
+            }
         }
 
 
