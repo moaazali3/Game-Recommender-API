@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useLanguage } from '../context/LanguageContext';
 import { submitFeedback, fetchFeedbacks } from '../services/api';
+import { SkeletonLoader } from '../components/SkeletonLoader';
 import { MessageSquareQuote, Star, Send, CheckCircle2, AlertCircle, Sparkles, User, Calendar, MessageCircle } from 'lucide-react';
 
 export const Feedback = () => {
@@ -173,8 +174,8 @@ export const Feedback = () => {
         )}
       </div>
 
-      {/* Community Feedbacks Wall (Only rendered if feedbacks exist) */}
-      {!loadingFeedbacks && feedbacksList.length > 0 && (
+      {/* Community Feedbacks Wall */}
+      {(loadingFeedbacks || feedbacksList.length > 0) && (
         <section className="community-feedbacks-section">
           <div className="community-header">
             <div className="community-badge-icon">
@@ -186,49 +187,53 @@ export const Feedback = () => {
             </div>
           </div>
 
-          <div className="feedbacks-grid">
-            {feedbacksList.slice(0, 3).map((item, idx) => {
-              const text = item.Description || item.description || item.Message || item.message || '';
-              const starsCount = item.Rating || item.rating || 5;
-              const dateVal = item.dateTime || item.DateTime || item.createdAt;
+          {loadingFeedbacks ? (
+            <SkeletonLoader variant="feedback" count={3} />
+          ) : (
+            <div className="feedbacks-grid">
+              {feedbacksList.slice(0, 3).map((item, idx) => {
+                const text = item.Description || item.description || item.Message || item.message || '';
+                const starsCount = item.Rating || item.rating || 5;
+                const dateVal = item.dateTime || item.DateTime || item.createdAt;
 
-              return (
-                <div key={item.Id || item.id || idx} className="feedback-item-card">
-                  <div className="feedback-card-top">
-                    {/* Stars */}
-                    <div className="feedback-card-stars">
-                      {[1, 2, 3, 4, 5].map((s) => (
-                        <Star
-                          key={s}
-                          size={14}
-                          fill={s <= starsCount ? 'var(--accent-amber)' : 'none'}
-                          color={s <= starsCount ? 'var(--accent-amber)' : 'var(--text-muted)'}
-                        />
-                      ))}
+                return (
+                  <div key={item.Id || item.id || idx} className="feedback-item-card">
+                    <div className="feedback-card-top">
+                      {/* Stars */}
+                      <div className="feedback-card-stars">
+                        {[1, 2, 3, 4, 5].map((s) => (
+                          <Star
+                            key={s}
+                            size={14}
+                            fill={s <= starsCount ? 'var(--accent-amber)' : 'none'}
+                            color={s <= starsCount ? 'var(--accent-amber)' : 'var(--text-muted)'}
+                          />
+                        ))}
+                      </div>
+
+                      {/* Date */}
+                      {dateVal && (
+                        <span className="feedback-card-date">
+                          <Calendar size={11} />
+                          <span>{formatDate(dateVal)}</span>
+                        </span>
+                      )}
                     </div>
 
-                    {/* Date */}
-                    {dateVal && (
-                      <span className="feedback-card-date">
-                        <Calendar size={11} />
-                        <span>{formatDate(dateVal)}</span>
-                      </span>
-                    )}
-                  </div>
+                    {/* Message Quote */}
+                    <p className="feedback-card-text">
+                      "{text}"
+                    </p>
 
-                  {/* Message Quote */}
-                  <p className="feedback-card-text">
-                    "{text}"
-                  </p>
-
-                  <div className="feedback-card-author">
-                    <User size={13} />
-                    <span>Gamer #{item.Id || item.id || (idx + 1)}</span>
+                    <div className="feedback-card-author">
+                      <User size={13} />
+                      <span>Gamer #{item.Id || item.id || (idx + 1)}</span>
+                    </div>
                   </div>
-                </div>
-              );
-            })}
-          </div>
+                );
+              })}
+            </div>
+          )}
         </section>
       )}
 
@@ -495,6 +500,34 @@ export const Feedback = () => {
           color: var(--text-muted);
           gap: 0.75rem;
           font-size: 0.95rem;
+        }
+
+        @media (max-width: 640px) {
+          .feedback-hero {
+            padding: 2rem 0.5rem 1.25rem;
+          }
+          .hero-title {
+            font-size: 1.85rem;
+          }
+          .feedback-form-surface {
+            padding: 1.5rem 1.15rem;
+            border-radius: var(--radius-lg);
+          }
+          .star-btn {
+            padding: 0.4rem;
+          }
+          .feedback-submit-btn {
+            width: 100%;
+            padding: 0.75rem 1rem;
+          }
+          .community-feedbacks-section {
+            margin-top: 2.5rem;
+            padding-top: 1.75rem;
+          }
+          .feedbacks-grid {
+            grid-template-columns: 1fr;
+            gap: 1rem;
+          }
         }
       `}</style>
     </div>

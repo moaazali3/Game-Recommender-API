@@ -15,6 +15,8 @@ export const GameCard = ({ game, onSelectSimilar, onOpenAiSummary, isLibrary = f
   const hasSeries = game.hasseries || game.hasSeries || false;
   const seriesId = game.seriesid || game.seriesId;
 
+  const similarityScore = game.similarityScore ?? game.SimilarityScore ?? game.similarity_score;
+
   // Process Tags
   let tagsList = [];
   const rawTags = game.tags || game.Tags || [];
@@ -24,12 +26,51 @@ export const GameCard = ({ game, onSelectSimilar, onOpenAiSummary, isLibrary = f
     tagsList = rawTags;
   }
 
-  // Determine Match Score Badge Color Class
-  let scoreClass = 'score-badge--low';
-  if (score >= 8) {
-    scoreClass = 'score-badge--high';
-  } else if (score >= 4) {
-    scoreClass = 'score-badge--mid';
+  // Determine Match Score Badge Color Class based on user's exact tiers
+  let scoreClass = 'score-badge--fair';
+  let scoreTooltip = '';
+
+  if (similarityScore != null) {
+    if (similarityScore >= 60) {
+      // Tier 1: 60%+ (Mythic / Ultra Rare - Radiant Gold)
+      scoreClass = 'score-badge--mythic';
+      scoreTooltip = `Mythic Match (${similarityScore}%)`;
+    } else if (similarityScore >= 55) {
+      // Tier 2: 55% - 59.9% (Legendary / Model Peak - Emerald Green)
+      scoreClass = 'score-badge--legendary';
+      scoreTooltip = `Peak Match (${similarityScore}%)`;
+    } else if (similarityScore >= 50) {
+      // Tier 3: 50% - 54.9% (Epic / Very High - Electric Cyan)
+      scoreClass = 'score-badge--epic';
+      scoreTooltip = `Top Match (${similarityScore}%)`;
+    } else if (similarityScore >= 45) {
+      // Tier 4: 45% - 49.9% (Rare / Strong Match - Royal Purple)
+      scoreClass = 'score-badge--rare';
+      scoreTooltip = `Strong Match (${similarityScore}%)`;
+    } else if (similarityScore >= 40) {
+      // Tier 5: 40% - 44.9% (Good Match - Cobalt Blue)
+      scoreClass = 'score-badge--good';
+      scoreTooltip = `Good Match (${similarityScore}%)`;
+    } else {
+      // Tier 6: < 40% (Fair / Moderate Match - Cool Slate)
+      scoreClass = 'score-badge--fair';
+      scoreTooltip = `Similar Style (${similarityScore}%)`;
+    }
+  } else {
+    if (score >= 20) {
+      scoreClass = 'score-badge--mythic';
+    } else if (score >= 15) {
+      scoreClass = 'score-badge--legendary';
+    } else if (score >= 10) {
+      scoreClass = 'score-badge--epic';
+    } else if (score >= 6) {
+      scoreClass = 'score-badge--rare';
+    } else if (score >= 3) {
+      scoreClass = 'score-badge--good';
+    } else {
+      scoreClass = 'score-badge--fair';
+    }
+    scoreTooltip = `${t('match_score')}: ${score}`;
   }
 
   const coverUrl = imgError || !appId
@@ -49,10 +90,13 @@ export const GameCard = ({ game, onSelectSimilar, onOpenAiSummary, isLibrary = f
         />
 
         {/* Top-Right: Match Score Badge (Only for recommendations) */}
-        {!isLibrary && score > 0 && (
-          <div className={`game-card-score-badge ${scoreClass}`} title={`${t('match_score')}: ${score}`}>
-            <span>{score}</span>
-            <span style={{ fontSize: '0.65rem', opacity: 0.85 }}>pts</span>
+        {!isLibrary && (similarityScore != null || score > 0) && (
+          <div
+            className={`game-card-score-badge ${scoreClass}`}
+            title={scoreTooltip}
+          >
+            <span>{similarityScore != null ? `${similarityScore}%` : score}</span>
+            <span style={{ fontSize: '0.65rem', opacity: 0.85 }}>{similarityScore != null ? 'match' : 'pts'}</span>
           </div>
         )}
 

@@ -11,6 +11,7 @@ export const getSteamImage = (appId) => {
   return `https://cdn.akamai.steamstatic.com/steam/apps/${appId}/header.jpg`;
 };
 
+
 /** Get game recommendations by AppId or Game Name */
 export const fetchRecommendations = async (searchTerm) => {
   const encoded = encodeURIComponent(searchTerm.trim());
@@ -48,6 +49,13 @@ export const fetchBlendRecommendations = async (gameNamesOrIds) => {
 export const fetchAllGames = async () => {
   const response = await fetch(`${API_BASE}/Recommendations/all`);
   if (!response.ok) throw new Error('Failed to load database library');
+  return await response.json();
+};
+
+/** Get live database stats and seeding progress */
+export const fetchLiveStats = async () => {
+  const response = await fetch(`${API_BASE}/Recommendations/stats`);
+  if (!response.ok) throw new Error('Failed to load stats');
   return await response.json();
 };
 

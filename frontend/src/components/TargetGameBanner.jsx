@@ -240,6 +240,32 @@ export const TargetGameBanner = ({
             font-size: 1.5rem;
           }
         }
+
+        @media (max-width: 640px) {
+          .target-banner-root {
+            border-radius: var(--radius-lg);
+            margin-bottom: 1.5rem;
+          }
+          .target-banner-layout {
+            padding: 1.15rem 1rem;
+            gap: 1.15rem;
+          }
+          .target-game-title {
+            font-size: 1.35rem;
+          }
+          .target-actions-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            width: 100%;
+            gap: 0.5rem;
+          }
+          .target-actions-row .btn {
+            width: 100%;
+            padding: 0.6rem 0.5rem !important;
+            font-size: 0.8rem;
+            justify-content: center;
+          }
+        }
       `}</style>
     </section>
   );

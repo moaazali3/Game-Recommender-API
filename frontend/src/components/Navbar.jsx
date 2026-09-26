@@ -105,6 +105,15 @@ export const Navbar = ({ onOpenAbout }) => {
             <MessageSquareQuote size={18} />
             <span>{t('nav_feedback')}</span>
           </NavLink>
+          <a
+            href="https://ludova.runasp.net/"
+            className="mobile-nav-link mobile-umbrella-link"
+            onClick={closeMobile}
+            title="Ludova Umbrella Platform"
+          >
+            <Sparkles size={18} color="var(--accent-amber)" />
+            <span>{t('nav_ludova_hub')}</span>
+          </a>
           <button type="button" className="mobile-nav-link" onClick={() => { closeMobile(); onOpenAbout(); }}>
             <Info size={18} />
             <span>{t('nav_about')}</span>
@@ -327,10 +336,30 @@ export const Navbar = ({ onOpenAbout }) => {
             display: none;
           }
           .mobile-menu-btn {
-            display: block;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 40px;
+            min-height: 40px;
           }
           .navbar-mobile-drawer {
             display: flex;
+          }
+        }
+
+        @media (max-width: 600px) {
+          .umbrella-gateway-link {
+            display: none;
+          }
+          .navbar-container {
+            padding: 0.65rem 1rem;
+            gap: 0.75rem;
+          }
+          .brand-title {
+            font-size: 1.15rem;
+          }
+          .brand-subtitle {
+            font-size: 0.62rem;
           }
         }
       `}</style>

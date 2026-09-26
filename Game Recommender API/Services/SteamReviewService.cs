@@ -1,4 +1,4 @@
-﻿using Game_Recommender_API.Models;
+using Game_Recommender_API.Models;
 using System.Text.Json;
 namespace Game_Recommender_API.Services
 {
@@ -10,9 +10,9 @@ namespace Game_Recommender_API.Services
         {
             _httpClient = httpClient;
         }
-        public async Task<Dictionary<string, string>> Gettop1000game()
+        public async Task<Dictionary<string, string>> Gettop1000game(int page = 0)
         {
-            string url = "https://steamspy.com/api.php?request=all&page=3";
+            string url = $"https://steamspy.com/api.php?request=all&page={page}";
             var response = await _httpClient.GetAsync(url);
             response.EnsureSuccessStatusCode();
             var jsonstring = await response.Content.ReadAsStringAsync();

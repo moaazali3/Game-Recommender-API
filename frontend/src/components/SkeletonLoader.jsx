@@ -123,6 +123,51 @@ export const SkeletonLoader = ({ variant = 'card', count = 1 }) => {
     );
   }
 
+  if (variant === 'feedback') {
+    return (
+      <div className="skeleton-feedback-grid">
+        {items.map((_, i) => (
+          <div key={i} className="skeleton-feedback-card">
+            <div className="skeleton-feedback-top">
+              <div className="skeleton skeleton-stars" style={{ width: '90px', height: '16px' }} />
+              <div className="skeleton skeleton-date" style={{ width: '70px', height: '14px' }} />
+            </div>
+            <div className="skeleton skeleton-text" style={{ width: '95%', height: '16px', marginTop: '0.75rem' }} />
+            <div className="skeleton skeleton-text" style={{ width: '75%', height: '16px', marginTop: '0.4rem' }} />
+            <div className="skeleton skeleton-author" style={{ width: '80px', height: '14px', marginTop: '1rem' }} />
+          </div>
+        ))}
+
+        <style>{`
+          .skeleton-feedback-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1.25rem;
+            width: 100%;
+          }
+          .skeleton-feedback-card {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-lg);
+            padding: 1.25rem;
+            display: flex;
+            flex-direction: column;
+          }
+          .skeleton-feedback-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+          }
+          @media (max-width: 640px) {
+            .skeleton-feedback-grid {
+              grid-template-columns: 1fr;
+            }
+          }
+        `}</style>
+      </div>
+    );
+  }
+
   // Default Game Card Skeleton
   return (
     <div className="skeleton-cards-grid">
@@ -133,8 +178,8 @@ export const SkeletonLoader = ({ variant = 'card', count = 1 }) => {
             <div className="skeleton skeleton-title" style={{ width: '70%', height: '22px' }} />
             <div className="skeleton-tags-row">
               <div className="skeleton skeleton-tag" style={{ width: '45px', height: '18px' }} />
-              <div className="skeleton skeleton-tag" style={{ width: '60px', height: '18px' }} />
-              <div className="skeleton skeleton-tag" style={{ width: '50px', height: '18px' }} />
+              <div className="skeleton-tag" style={{ width: '60px', height: '18px' }} />
+              <div className="skeleton-tag" style={{ width: '50px', height: '18px' }} />
             </div>
             <div className="skeleton-card-actions">
               <div className="skeleton skeleton-btn" style={{ flex: 1, height: '34px' }} />
@@ -178,6 +223,12 @@ export const SkeletonLoader = ({ variant = 'card', count = 1 }) => {
           display: flex;
           gap: 0.5rem;
           margin-top: 0.5rem;
+        }
+        @media (max-width: 640px) {
+          .skeleton-cards-grid {
+            grid-template-columns: 1fr;
+            gap: 1rem;
+          }
         }
       `}</style>
     </div>
