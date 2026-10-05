@@ -48,7 +48,10 @@ if __name__ == "__main__":
     )
 
     app.launch(
-        app_kwargs={"lifespan": lifespan},
+        app_kwargs={
+                    "lifespan": lifespan,
+        },
         server_name="0.0.0.0",
         ssr_mode=False,
+
     )

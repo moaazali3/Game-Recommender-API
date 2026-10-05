@@ -25,25 +25,58 @@ class ModelHolder:
 holder = ModelHolder()
 
 
-def _run_bootstrap_and_init(settings, storage, scheduler):
-    """Heavy training/bootstrap logic run in a separate thread."""
+def _initialize_model_in_background(settings, storage, scheduler):
+    """Run model discovery, bootstrap, downloads, and model loading in a background thread."""
     try:
-        scheduler.run_monthly()
-        generation = storage.active_generation()
+        generation = None
+
+        try:
+            generation = storage.active_generation()
+
+        except ActiveGenerationUnavailable:
+            if settings.database_url and scheduler is not None:
+                logger.warning(
+                    "component=startup operation=model_bootstrap "
+                    "status=starting_background reason=active_generation_missing"
+                )
+
+                scheduler.run_monthly()
+                generation = storage.active_generation()
+
+            else:
+                logger.warning(
+                    "component=startup operation=model_load "
+                    "status=unavailable reason=active_generation_missing"
+                )
+
         if generation is not None:
+            logger.info(
+                "component=startup operation=model_load "
+                "status=loading generation=%s",
+                generation,
+            )
+
             holder.current = GameRecommender(
                 settings.cache_dir,
                 generation,
             )
+
             logger.info(
-                "component=startup operation=model_bootstrap "
+                "component=startup operation=model_load "
                 "status=ready generation=%s",
                 generation,
             )
+
+        else:
+            logger.warning(
+                "component=startup operation=model_load "
+                "status=unavailable reason=no_generation"
+            )
+
     except Exception:
+        holder.current = None
         logger.exception(
-            "component=startup operation=model_bootstrap "
-            "status=failed; continuing_without_model"
+            "component=startup operation=model_init status=failed"
         )
 
 
@@ -58,7 +91,9 @@ async def lifespan(application):
         try:
             settings = Settings.from_env()
         except Exception:
-            logger.exception("component=config operation=load status=invalid")
+            logger.exception(
+                "component=config operation=load status=invalid"
+            )
             yield
             return
 
@@ -70,58 +105,13 @@ async def lifespan(application):
                 settings.cache_dir,
             )
 
-            generation = None
-
-            try:
-                generation = storage.active_generation()
-            except ActiveGenerationUnavailable:
-                if not settings.database_url:
-                    logger.warning(
-                        "component=startup operation=model_load "
-                        "status=unavailable reason=active_generation_missing"
-                    )
-                else:
-                    logger.warning(
-                        "component=startup operation=model_bootstrap "
-                        "status=starting_background reason=active_generation_missing"
-                    )
-
-                    scheduler = DeploymentScheduler(
-                        storage,
-                        settings.database_url,
-                        settings.cache_dir,
-                        model_holder=holder,
-                    )
-
-                    loop = asyncio.get_running_loop()
-                    loop.run_in_executor(
-                        None,
-                        _run_bootstrap_and_init,
-                        settings,
-                        storage,
-                        scheduler,
-                    )
-
-            if generation is not None:
-                holder.current = GameRecommender(
-                    settings.cache_dir,
-                    generation,
-                )
-
-                logger.info(
-                    "component=startup operation=model_load "
-                    "status=ready generation=%s",
-                    generation,
-                )
-
             if settings.database_url:
-                if scheduler is None:
-                    scheduler = DeploymentScheduler(
-                        storage,
-                        settings.database_url,
-                        settings.cache_dir,
-                        model_holder=holder,
-                    )
+                scheduler = DeploymentScheduler(
+                    storage,
+                    settings.database_url,
+                    settings.cache_dir,
+                    model_holder=holder,
+                )
 
                 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 
@@ -154,6 +144,16 @@ async def lifespan(application):
                     "status=ready monthly=01@02:00 weekly=sat@04:00"
                 )
 
+            loop = asyncio.get_running_loop()
+
+            loop.run_in_executor(
+                None,
+                _initialize_model_in_background,
+                settings,
+                storage,
+                scheduler,
+            )
+
         else:
             logger.warning(
                 "component=startup operation=model_load "
@@ -170,6 +170,7 @@ async def lifespan(application):
 
     try:
         yield
+
     finally:
         logger.info("component=lifecycle operation=lifespan_shutdown")
 
