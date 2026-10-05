@@ -135,7 +135,7 @@ Game-Recommender-API/
 
 ### Running the ML Recommendation Service
 
-The Python ML recommender is the primary recommendation engine. The repository contains both local and deployment-oriented variants under [`Recommender Core/`](./Recommender%20Core/). Each variant includes its own `README.md` with the required installation, configuration, and execution steps.
+The Python ML recommender is the primary recommendation engine. The repository contains both local and deployment-oriented variants under [`Recommender Core/Game Recommender`](./Recommender%20Core/Game%20Recommender/). Each variant includes its own `README.md` with the required installation, configuration, and execution steps.
 
 ---
 
