@@ -21,17 +21,15 @@ def make_router(holder, settings_type) -> APIRouter:
     async def game_blender(request: BlenderRequest) -> dict[str, Any]:
         try:
             if holder.current is None:
-                raise RuntimeError("Blender model is unavailable")
+                raise RuntimeError("Blender service is unavailable")
             settings = settings_type.from_env()
-            return {
-                "status": "success",
-                "data": holder.current.recommend(
-                    request.selected_app_ids,
-                    settings.top_k if request.top_k is None else request.top_k,
-                    settings.stage2_multiplier if request.stage2_multiplier is None else request.stage2_multiplier,
-                ),
-            }
-        except (RuntimeError, ValueError, FileNotFoundError, KeyError) as exc:
+            recommendations = holder.current.recommend(
+                request.selected_app_ids,
+                settings.top_k if request.top_k is None else request.top_k,
+                settings.stage2_multiplier if request.stage2_multiplier is None else request.stage2_multiplier,
+            )
+            return {"status": "success", "data": {"recommendations": recommendations}}
+        except (RuntimeError, ValueError) as exc:
             return {"status": "error", "data": {}, "error": str(exc)}
 
     return router

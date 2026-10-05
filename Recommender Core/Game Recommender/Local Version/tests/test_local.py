@@ -6,13 +6,20 @@ import joblib
 import numpy as np
 import pandas as pd
 import pytest
+from sklearn.metrics.pairwise import cosine_similarity
 
-from api.routes import PageRequest, make_router
+from api.routes import MixRequest, PageRequest, make_router
 from infrastructure.storage import LocalStorage
 from ml.model import FILES, build_artifacts, validate_generation, write_generation
 from ml.recommender import GameRecommender
 
 DATA = pd.DataFrame({"Appid": [10, 20, 30], "Tags": ["action,indie", "action,indie", "puzzle"], "keywords": ["space,coop", "space,coop", "logic"]})
+
+MIX_DATA = pd.DataFrame({
+    "Appid": [10, 20, 30, 40],
+    "Tags": ["action,indie", "puzzle,indie", "action,puzzle", "action"],
+    "keywords": ["space,coop", "space,coop", "space,coop", "logic"],
+})
 
 
 def test_build_write_load_and_core_ranking(tmp_path):
@@ -64,3 +71,47 @@ def test_route_returns_safe_error_when_model_is_unavailable():
     response = asyncio.run(route.routes[0].endpoint(PageRequest(app_id = 10)))
     assert response["status"] == "error"
     assert response["details"]["path"] == "/api/v1/game-details"
+
+
+def test_normal_request_shape_is_unchanged_and_mix_route_is_additive(tmp_path):
+    generation = write_generation(build_artifacts(MIX_DATA), tmp_path)
+    model = GameRecommender(tmp_path, generation)
+    route = make_router(model)
+
+    normal = asyncio.run(route.routes[0].endpoint(PageRequest(app_id = 10, top_n = 2)))
+    assert normal == {"status": "success", "data": {"recommendations": model.recommend(10, 2)}}
+
+    mix = asyncio.run(route.routes[1].endpoint(MixRequest(selected_app_ids = [10, 20], top_k = 1, include_tags = True)))
+    assert mix["status"] == "success"
+    assert "Tags" in mix["data"]["games"][0]
+
+
+def test_mix_include_tags_is_opt_in_and_returns_source_order(tmp_path):
+    generation = write_generation(build_artifacts(MIX_DATA), tmp_path)
+    model = GameRecommender(tmp_path, generation)
+
+    without_tags = model.recommend_mix([10, 20], top_k = 2)
+    assert all("Tags" not in game for game in without_tags["games"])
+    assert "selected_games" not in without_tags
+
+    with_tags = model.recommend_mix([10, 20], top_k = 2, include_tags = True)
+    assert [game["app_id"] for game in with_tags["games"]] == [game["app_id"] for game in without_tags["games"]]
+    assert all("Tags" in game for game in with_tags["games"])
+    assert with_tags["selected_games"] == [
+        {"app_id": 10, "Tags": "action,indie"},
+        {"app_id": 20, "Tags": "puzzle,indie"},
+    ]
+
+
+def test_mix_score_uses_separate_tag_and_keyword_spaces(tmp_path):
+    generation = write_generation(build_artifacts(MIX_DATA), tmp_path)
+    model = GameRecommender(tmp_path, generation)
+    result = model.recommend_mix([10, 20], top_k = 1, include_tags = True)
+    candidate_index = model.id_to_index[result["games"][0]["app_id"]]
+    tag_query = model.tag_vectorizer.transform(["action indie puzzle"])
+    keyword_query = model.keyword_vectorizer.transform(["space coop"])
+    tag_score = cosine_similarity(model.tag_matrix[candidate_index], tag_query)[0, 0]
+    keyword_score = cosine_similarity(model.keyword_matrix[candidate_index], keyword_query)[0, 0]
+    expected = float(np.sqrt(max(tag_score * keyword_score, 0.0)))
+    assert result["games"][0]["similarity_score"] == pytest.approx(expected)
+    assert result["games"][0]["app_id"] not in [10, 20]

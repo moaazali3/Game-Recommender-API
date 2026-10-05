@@ -1,9 +1,4 @@
 fastapi
-joblib
-numpy
-pandas
 python-dotenv
-scikit-learn
-scipy
 pydantic
 pytest

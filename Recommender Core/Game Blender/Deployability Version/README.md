@@ -1,8 +1,6 @@
 # Game Blender — Deployability Version
 
-Hugging Face-oriented production packaging for Game Blender. Importing the package does not require credentials or network access.
-
-The deployed artifact directory contains the established vectorizers, sparse matrices, AppIDs, and a self-contained `catalog.json` or `catalog.csv`; a configured catalog source may also be supplied. `HubStorage` downloads lazily only when explicitly asked to load a remote generation.
+HTTP-only Game Blender service. It delegates candidate generation and filtering to the Game Recommender API, then performs runtime gap grouping and exclusive-tag coverage ordering. It does not load local model artifacts or catalogs.
 
 ## Run tests
 
@@ -12,9 +10,7 @@ pytest -q
 
 ## Configuration
 
-- `MODEL_CACHE_DIR`: local artifact cache, default `.model-cache`.
-- `HF_REPO_ID`: optional repository identifier, required only for explicit Hub access.
-- `HF_TOKEN`: optional token, never needed for import/tests.
-- `CATALOG_PATH`: optional configured catalog source.
+- `GAME_RECOMMENDER_URL`: base URL of the Game Recommender API, default `http://127.0.0.1:8001`.
+- `GAME_RECOMMENDER_TOKEN`: optional bearer token sent to the Game Recommender API.
 - `BLENDER_TOP_K`: positive integer, default `10`.
 - `BLENDER_STAGE2_MULTIPLIER`: positive integer, default `3`.

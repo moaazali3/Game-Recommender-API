@@ -7,8 +7,7 @@ from fastapi import APIRouter
 
 from api.routes import make_router
 from infrastructure.config import Settings
-from infrastructure.storage import LocalStorage
-from ml.blender import GameBlender
+from ml.blender import GameBlender, GameRecommenderClient
 
 
 class Holder:
@@ -22,12 +21,10 @@ router = APIRouter()
 @asynccontextmanager
 async def lifespan(app):
     settings = Settings.from_env()
-    try:
-        bundle = LocalStorage(settings.model_storage_dir).load(settings.catalog_path)
-    except (FileNotFoundError, KeyError, ValueError):
-        holder.current = None
-    else:
-        holder.current = GameBlender(bundle)
+    holder.current = GameBlender(GameRecommenderClient(
+        settings.game_recommender_url,
+        settings.game_recommender_token,
+    ))
     yield
     holder.current = None
 

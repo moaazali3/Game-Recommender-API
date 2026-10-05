@@ -1,1 +1,1 @@
-"""Configuration and artifact storage."""
+"""Game Blender infrastructure package."""

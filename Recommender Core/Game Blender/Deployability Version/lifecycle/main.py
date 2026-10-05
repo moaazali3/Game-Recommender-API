@@ -7,8 +7,7 @@ from fastapi import APIRouter
 
 from api.routes import make_router
 from infrastructure.config import Settings
-from infrastructure.storage import HubStorage
-from ml.blender import GameBlender
+from ml.blender import GameBlender, GameRecommenderClient
 
 
 class Holder:
@@ -22,17 +21,10 @@ router = APIRouter()
 @asynccontextmanager
 async def lifespan(app):
     settings = Settings.from_env()
-    try:
-        bundle = HubStorage(
-            settings.hf_repo_id,
-            settings.hf_token,
-            settings.hf_repo_type,
-            settings.model_cache_dir,
-        ).load(settings.catalog_path)
-    except (FileNotFoundError, KeyError, ValueError, RuntimeError):
-        holder.current = None
-    else:
-        holder.current = GameBlender(bundle)
+    holder.current = GameBlender(GameRecommenderClient(
+        settings.game_recommender_url,
+        settings.game_recommender_token,
+    ))
     yield
     holder.current = None
 

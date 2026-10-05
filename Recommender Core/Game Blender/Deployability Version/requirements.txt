@@ -1,10 +1,4 @@
 fastapi
-huggingface_hub
-joblib
-numpy
-pandas
-scikit-learn
-scipy
 pydantic
 gradio
 pytest
