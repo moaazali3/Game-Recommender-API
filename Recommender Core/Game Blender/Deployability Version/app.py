@@ -21,7 +21,7 @@ def zerogpu_warmup():
     return None
 
 
-app = gr.Server(title = "Game Blender", lifespan = lifespan)
+app = gr.Server(title = "Game Blender")
 app.include_router(router)
 
 
@@ -33,4 +33,8 @@ def health():
 demo = app
 
 if __name__ == "__main__":
-    app.launch(server_name = "0.0.0.0", ssr_mode = False)
+    app.launch(
+        app_kwargs = {"lifespan": lifespan},
+        server_name = "0.0.0.0",
+        ssr_mode = False,
+    )

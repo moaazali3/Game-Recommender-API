@@ -25,7 +25,6 @@ def zerogpu_warmup():
 
 app = gr.Server(
     title="Game Recommender",
-    lifespan=lifespan,
 )
 
 app.include_router(router)
@@ -49,6 +48,7 @@ if __name__ == "__main__":
     )
 
     app.launch(
+        app_kwargs={"lifespan": lifespan},
         server_name="0.0.0.0",
         ssr_mode=False,
     )
