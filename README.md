@@ -12,30 +12,36 @@ A powerful, intelligent Game Recommendation System that suggests games from Stea
 - Uses an external TF-IDF-based recommendation engine to identify related games from their tags and review-derived keywords.
 - The ASP.NET API uses the Python ML recommender as the primary recommendation engine, with the deterministic C# content-based engine available as a fallback or when `engine=classic` is explicitly requested.
 - Displays recommendation scores and related game metadata to provide context for the returned results.
-- Supports blending the characteristics of up to four selected games to generate combined recommendations. (Doesn't support ML models yet)
+- Supports blending the characteristics of up to four selected games to generate combined recommendations.
 
-### 2. Bilingual Support (Internationalization)
+### 2. Smart Blender
+- Takes recommendations from the Python recommendation engine for two to four selected games and combines them into one list.
+- Groups recommendations with similar scores and keeps related games together during the final selection.
+- Gives priority to games that match more of the selected games while keeping the original recommendation order when the coverage is the same.
+- Returns a diverse selection of game IDs based on the recommendations from the selected games.
+
+### 3. Bilingual Support (Internationalization)
 - Full bilingual translation (Arabic / English) switching dynamically in real time.
 - Automatic layout direction switching (RTL for Arabic, LTR for English) for an optimal user experience.
 
-### 3. AI-Powered Reviews Summary
+### 4. AI-Powered Reviews Summary
 - Integrates with **Groq AI** to analyze and summarize Steam reviews for a game.
 - Supports a requested language such as English or Arabic and can cache English summaries.
 - Renders key **Pros** and **Cons** in a clean popup summary.
 
-### 4. Interactive Series Timelines
+### 5. Interactive Series Timelines
 - Explore complete storylines of franchises such as *Resident Evil*, *Dark Souls*, and *Assassin's Creed*.
 - Imports series data from an external game-data integration and can use AI to identify junk entries, mark mainline games, and arrange official games by story chronology.
 - Toggle between **Mainline Games Only** and the full timeline.
 - Search series, view release information, and browse responsive timeline layouts.
 
-### 5. Seamless Navigation, Library & Feedback
+### 6. Seamless Navigation, Library & Feedback
 - Recommendation cards show a **🔗 Series Badge** when a game belongs to a franchise.
 - Autocomplete search supports aliases such as GTA, DS3, RE4, and GoW.
 - Browse the saved game library and monitor seeding status and recent activity.
 - Submit feedback and retrieve recent feedback through the API.
 
-### 6. Glassmorphic UI Design
+### 7. Glassmorphic UI Design
 - A dark, sleek, responsive UI built with custom background glowing orbs, backdrop filters, and smooth micro-animations.
 - Implemented with React components and custom CSS rather than a heavy UI framework.
 
@@ -46,7 +52,7 @@ A powerful, intelligent Game Recommendation System that suggests games from Stea
 - **Frontend:** React, React Router, Vite, and custom CSS/glassmorphism styling.
 - **Backend:** C# ASP.NET Core Web API.
 - **Database:** Entity Framework Core; the configured runtime provider is SQL Server through `ConnectionStrings:DefaultConnection`. The tracked `games.db` file is also copied to output, but SQLite is not the provider configured in [`Program.cs`](./Game%20Recommender%20API/Program.cs).
-- Recommendation engines: Primary Python/scikit-learn TF-IDF recommendation engine, with a deterministic C# content-based fallback.
+- **Recommendation engines:** Primary Python/scikit-learn TF-IDF recommendation engine, with a deterministic C# content-based fallback.
 - **AI Integrations:** Groq AI for review summaries and timeline cleanup.
 - **External Data:** Steam, SteamSpy, and related game-data integrations used by the backend services.
 
@@ -58,48 +64,67 @@ A powerful, intelligent Game Recommendation System that suggests games from Stea
 Game-Recommender-API/
 ├── README.md
 │
-├── Game Recommender API/              # ASP.NET Core backend and REST API
-│   ├── Controllers/                   # API endpoints
-│   ├── Data/                          # EF Core database context and data access
-│   ├── Migrations/                    # EF Core database migrations
-│   ├── Models/                        # Database/domain models
-│   ├── Services/                      # Application logic and external integrations
-│   ├── Properties/                    # ASP.NET Core launch/development settings
-│   ├── Program.cs                     # Application configuration and startup
-│   ├── Game Recommender API.csproj    # .NET project configuration
-│   └── games.db                       # SQLite database file
+├── Game Recommender API/               # ASP.NET Core backend and REST API
+│   ├── Controllers/                    # API endpoints
+│   ├── Data/                           # EF Core database context and data access
+│   ├── Migrations/                     # EF Core database migrations
+│   ├── Models/                         # Database/domain models
+│   ├── Services/                       # Application logic and external integrations
+│   ├── Properties/                     # ASP.NET Core launch/development settings
+│   ├── Program.cs                      # Application configuration and startup
+│   ├── Game Recommender API.csproj     # .NET project configuration
+│   └── games.db                        # SQLite database file
 │
-├── frontend/                          # React/Vite frontend
-│   ├── public/                        # Static frontend assets
+├── frontend/                           # React/Vite frontend
+│   ├── public/                         # Static frontend assets
 │   ├── src/
-│   │   ├── components/                # Reusable UI components
-│   │   ├── context/                   # Shared React state/context
-│   │   ├── hooks/                     # Custom React hooks
-│   │   ├── pages/                     # Application pages
-│   │   ├── services/                  # API communication layer
-│   │   ├── App.jsx                    # Main React application
-│   │   └── main.jsx                   # Frontend entry point
-│   ├── package.json                   # Frontend dependencies and scripts
-│   └── vite.config.js                 # Vite configuration
+│   │   ├── components/                 # Reusable UI components
+│   │   ├── context/                    # Shared React state/context
+│   │   ├── hooks/                      # Custom React hooks
+│   │   ├── pages/                      # Application pages
+│   │   ├── services/                   # API communication layer
+│   │   ├── App.jsx                     # Main React application
+│   │   └── main.jsx                    # Frontend entry point
+│   ├── package.json                    # Frontend dependencies and scripts
+│   └── vite.config.js                  # Vite configuration
 │
-└── Recommender Core/                  # Python ML recommendation system
-    ├── Local Version/                 # Local recommendation-service implementation
-    │   ├── api/                       # FastAPI routes
-    │   ├── infrastructure/            # Configuration and infrastructure
-    │   ├── lifecycle/                 # Model/artifact lifecycle management
-    │   ├── ml/                        # TF-IDF recommendation logic
-    │   ├── tests/                     # Recommender tests
-    │   ├── app.py                     # FastAPI application entry point
-    │   └── requirements.txt            # Python dependencies
+└── Recommender Core/                   # Python recommendation services
     │
-    └── Deployability Version/         # Deployment-oriented recommender implementation
-        ├── api/                       # FastAPI routes
-        ├── infrastructure/            # Deployment/configuration infrastructure
-        ├── lifecycle/                 # Model/artifact lifecycle management
-        ├── ml/                        # TF-IDF recommendation logic
-        ├── app.py                     # FastAPI application entry point
-        └── requirements.txt            # Python dependencies
-
+    ├── Game Recommender/               # Game recommendation service
+    │   ├── Local Version/              # Local recommendation-service implementation
+    │   │   ├── api/                    # FastAPI routes
+    │   │   ├── infrastructure/         # Configuration and infrastructure
+    │   │   ├── lifecycle/              # Model/artifact lifecycle management
+    │   │   ├── ml/                     # TF-IDF recommendation logic
+    │   │   ├── tests/                  # Recommender tests
+    │   │   ├── app.py                  # FastAPI application entry point
+    │   │   └── requirements.txt        # Python dependencies
+    │   │
+    │   └── Deployability Version/      # Deployment-oriented recommender implementation
+    │       ├── api/                    # FastAPI routes
+    │       ├── infrastructure/         # Deployment/configuration infrastructure
+    │       ├── lifecycle/              # Model/artifact lifecycle management
+    │       ├── ml/                     # TF-IDF recommendation logic
+    │       ├── app.py                  # application entry point
+    │       └── requirements.txt        # Python dependencies
+    │
+    └── Game Blender/                   # Multi-game recommendation processing service
+        ├── Local Version/              # Local Blender implementation
+        │   ├── api/                    # FastAPI routes
+        │   ├── infrastructure/         # Configuration and service clients
+        │   ├── lifecycle/              # Service startup and lifecycle management
+        │   ├── ml/                     # Recommendation grouping and coverage logic
+        │   ├── tests/                  # Blender tests
+        │   ├── app.py                  # FastAPI application entry point
+        │   └── requirements.txt        # Python dependencies
+        │
+        └── Deployability Version/      # Deployment-oriented Blender implementation
+            ├── api/                    # FastAPI routes
+            ├── infrastructure/         # Deployment/configuration infrastructure
+            ├── lifecycle/              # Service startup and lifecycle management
+            ├── ml/                     # Recommendation grouping and coverage logic
+            ├── app.py                  # application entry point
+            └── requirements.txt        # Python dependencies
 ```
 
 ## ⚙️ Getting Started
@@ -133,9 +158,11 @@ Game-Recommender-API/
    The Vite configuration writes the build to `Game Recommender API/wwwroot`. The ASP.NET backend serves `wwwroot` and falls back to `index.html`.
 5. Open the local URL provided by the API or Vite development server. Swagger/OpenAPI is available in the ASP.NET development environment.
 
-### Running the ML Recommendation Service
+### Running the ML Recommendation & Blender Services
 
-The Python ML recommender is the primary recommendation engine. The repository contains both local and deployment-oriented variants under [`Recommender Core/`](./Recommender%20Core/). Each variant includes its own `README.md` with the required installation, configuration, and execution steps.
+The Python ML recommender is the primary recommendation engine. The repository contains both local and deployment-oriented variants under [`Recommender Core/Game Recommender`](./Recommender%20Core/Game%20Recommender/). Each variant includes its own `README.md` with the required installation, configuration, and execution steps.
+
+The Game Blender handles the final processing of multi-game recommendations. The repository contains both local and deployment-oriented variants under [`Recommender Core/Game Blender`](./Recommender%20Core/Game%20Blender/). Each variant includes its own `README.md` with the required installation, configuration, and execution steps.
 
 ---
 
@@ -166,10 +193,16 @@ The Python ML recommender is the primary recommendation engine. The repository c
 ### Python ML Recommendation Service
 The separate FastAPI service used by `MlRecommendationService` exposes the ML recommendation endpoint.
 - `POST /api/v1/game-details` - Accepts the recommendation request payload and returns the ML recommendation response.
+- `POST /api/v1/mix-recommendations` - Accepts two to four selected game IDs and returns ranked recommendations based on the selected games.
+
+### Game Blender Service
+The separate Game Blender service handles multi-game recommendations after the Python recommendation engine returns the candidate games.
+- `POST /api/v1/game-blender` - Accepts two to four selected game IDs and returns the blended recommendation IDs..
+
 
 ---
 
-## 🤖 Recommendation Engine Details
+## 🤖 Recommendation & Blender Engine Details
 
 The application's primary recommendation approach is a Python/scikit-learn content-based recommendation engine built around two separate character-level TF-IDF representations: one for game tags and another for review-derived keywords.
 
@@ -195,6 +228,14 @@ score = keyword_matches + 5 × tag_matches
 ```
 
 The recommendation system is content-based: it does not use collaborative filtering, user-profile learning, or supervised ranking.
+
+For multi-game recommendations, the Game Blender works as a separate post-processing step after the Python recommendation service. It requests a larger group of candidates from the recommender, then organizes them before returning the final recommendations.
+
+The Blender groups candidates based on the relative gaps between their recommendation scores. It uses the 75th percentile of these gaps to identify where a new group should start.
+
+Within each group, candidates are ordered by how many of the selected games they match through their exclusive tags. When candidates have the same coverage, their original recommendation order is preserved.
+
+The Blender does not calculate recommendation scores or load the recommendation model artifacts. It only works with the candidates, scores, and tags returned by the Python recommendation service.
 
 ---
 
