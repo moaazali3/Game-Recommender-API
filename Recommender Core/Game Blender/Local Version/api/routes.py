@@ -23,12 +23,19 @@ def make_router(holder, settings_type) -> APIRouter:
             if holder.current is None:
                 raise RuntimeError("Blender service is unavailable")
             settings = settings_type.from_env()
-            recommendations = holder.current.recommend(
+            candidates = holder.current.recommend(
                 request.selected_app_ids,
                 settings.top_k if request.top_k is None else request.top_k,
                 settings.stage2_multiplier if request.stage2_multiplier is None else request.stage2_multiplier,
             )
-            return {"status": "success", "data": {"recommendations": recommendations}}
+            games = [
+                {
+                    "app_id": int(candidate["app_id"]),
+                    "similarity_score": round(float(candidate["similarity_score"]) * 100, 2),
+                }
+                for candidate in candidates
+            ]
+            return {"status": "success", "data": {"recommendations": {"total": len(games), "games": games}}}
         except (RuntimeError, ValueError) as exc:
             return {"status": "error", "data": {}, "error": str(exc)}
 

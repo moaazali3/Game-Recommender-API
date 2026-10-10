@@ -4,6 +4,7 @@ from pathlib import Path
 
 import pytest
 
+from api.routes import make_router
 from ml.blender import GameBlender, GameRecommenderClient, P75_DEFINITION
 
 
@@ -50,10 +51,10 @@ def test_requests_k_times_multiplier_and_uses_all_returned_candidates(monkeypatc
     assert client.calls == [([1, 2], 4, True)]
     assert seen_scores == [[1.0, 0.9, 0.8, 0.7, 0.6, 0.5]]
     assert len(result) == 2
-    assert all(isinstance(app_id, int) for app_id in result)
+    assert all(isinstance(candidate["app_id"], int) for candidate in result)
 
 
-def test_pipeline_reorders_full_pool_once_and_returns_app_ids_only(monkeypatch):
+def test_pipeline_reorders_full_pool_once_and_preserves_candidate_scores(monkeypatch):
     payload = {
         "selected_games": [
             {"app_id": 1, "Tags": "Alpha"},
@@ -80,8 +81,67 @@ def test_pipeline_reorders_full_pool_once_and_returns_app_ids_only(monkeypatch):
 
     assert client.calls == [([1, 2], 4, True)]
     assert seen_pool == [[101, 102, 103, 104]]
-    assert result == [101, 103]
-    assert all(type(app_id) is int for app_id in result)
+    assert result == [
+        {"app_id": 101, "similarity_score": 1.0},
+        {"app_id": 103, "similarity_score": 0.49},
+    ]
+
+
+def test_route_shapes_percentages_in_final_order_and_total():
+    class Holder:
+        current = type("Blender", (), {
+            "recommend": lambda self, selected_app_ids, top_k, stage2_multiplier: [
+                {"app_id": 103, "similarity_score": 0.49126},
+                {"app_id": 101, "similarity_score": 1.0},
+            ],
+        })()
+
+    class Settings:
+        @staticmethod
+        def from_env():
+            return type("Config", (), {"top_k": 10, "stage2_multiplier": 3})()
+
+    route = make_router(Holder(), Settings).routes[0].endpoint
+    response = __import__("asyncio").run(route(type("Request", (), {
+        "selected_app_ids": [1, 2], "top_k": 2, "stage2_multiplier": 2,
+    })()))
+
+    assert response == {
+        "status": "success",
+        "data": {
+            "recommendations": {
+                "total": 2,
+                "games": [
+                    {"app_id": 103, "similarity_score": 49.13},
+                    {"app_id": 101, "similarity_score": 100.0},
+                ],
+            },
+        },
+    }
+
+
+def test_route_reports_fewer_candidates_without_internal_fields():
+    class Holder:
+        current = type("Blender", (), {
+            "recommend": lambda self, selected_app_ids, top_k, stage2_multiplier: [
+                {"app_id": 44, "similarity_score": 0.25, "Tags": "Hidden", "coverage_count": 2},
+            ],
+        })()
+
+    class Settings:
+        @staticmethod
+        def from_env():
+            return type("Config", (), {"top_k": 10, "stage2_multiplier": 3})()
+
+    route = make_router(Holder(), Settings).routes[0].endpoint
+    response = __import__("asyncio").run(route(type("Request", (), {
+        "selected_app_ids": [1, 2], "top_k": 5, "stage2_multiplier": 2,
+    })()))
+
+    assert response["data"]["recommendations"] == {
+        "total": 1,
+        "games": [{"app_id": 44, "similarity_score": 25.0}],
+    }
 
 
 def test_coverage_reorders_only_inside_groups_and_keeps_ties_stable():

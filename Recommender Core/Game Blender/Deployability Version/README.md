@@ -2,11 +2,23 @@
 
 HTTP-only Game Blender service. It delegates candidate generation and filtering to the Game Recommender API, then performs runtime gap grouping and exclusive-tag coverage ordering. It does not load local model artifacts or catalogs.
 
-## Run tests
+## Endpoint
 
-```bash
-pytest -q
+`POST /api/v1/game-blender`
+
+Request:
+
+```json
+{"selected_app_ids": [1, 2], "top_k": 2, "stage2_multiplier": 3}
 ```
+
+Response:
+
+```json
+{"status": "success", "data": {"recommendations": {"total": 2, "games": [{"app_id": 101, "similarity_score": 92.5}, {"app_id": 205, "similarity_score": 87.13}]}}}
+```
+
+The Blender response converts upstream `similarity_score` values from 0–1 to percentages at the response boundary and rounds them to two decimals. The final game objects contain only `app_id` and `similarity_score`.
 
 ## Configuration
 
