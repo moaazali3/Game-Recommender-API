@@ -204,7 +204,7 @@ class GameBlender:
         selected_app_ids: Iterable[int],
         top_k: int = DEFAULT_TOP_K,
         stage2_multiplier: int = DEFAULT_STAGE2_MULTIPLIER,
-    ) -> list[int]:
+    ) -> list[dict[str, Any]]:
         selected = self._validate_selected(selected_app_ids)
         top_k = self._positive_int(top_k, "top_k")
         stage2_multiplier = self._positive_int(stage2_multiplier, "stage2_multiplier")
@@ -226,4 +226,7 @@ class GameBlender:
         working_pool = [dict(candidate, coverage_count = self._coverage_count(candidate, exclusive)) for candidate in candidates]
         groups, _, _ = self.group_candidates(candidate["similarity_score"] for candidate in working_pool)
         reordered = self._reorder_within_groups(working_pool, groups)
-        return [int(candidate["app_id"]) for candidate in reordered[:top_k]]
+        return [
+            {"app_id": int(candidate["app_id"]), "similarity_score": candidate["similarity_score"]}
+            for candidate in reordered[:top_k]
+        ]

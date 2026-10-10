@@ -97,6 +97,8 @@ def test_mix_include_tags_is_opt_in_and_returns_source_order(tmp_path):
     with_tags = model.recommend_mix([10, 20], top_k = 2, include_tags = True)
     assert [game["app_id"] for game in with_tags["games"]] == [game["app_id"] for game in without_tags["games"]]
     assert all("Tags" in game for game in with_tags["games"])
+    assert all("mix_score" not in game for game in with_tags["games"])
+    assert all("similarity_score" in game for game in with_tags["games"])
     assert with_tags["selected_games"] == [
         {"app_id": 10, "Tags": "action,indie"},
         {"app_id": 20, "Tags": "puzzle,indie"},
