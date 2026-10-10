@@ -45,7 +45,7 @@ The success response keeps the Core envelope: `{"status":"success","data":{"reco
 - `top_k`: positive integer, default `10`.
 - `include_tags`: boolean, default `false`.
 
-With `include_tags` omitted or `false`, the response data contains `total` and `games`; each candidate contains `app_id`, `similarity_score`, and `mix_score`. With `include_tags: true`, each candidate also contains `Tags`, and the response data also contains `selected_games`, whose objects contain only `app_id` and `Tags`. Names are not returned.
+With `include_tags` omitted or `false`, the response data contains `total` and `games`; each candidate contains `app_id` and `similarity_score`. With `include_tags: true`, each candidate also contains `Tags`, and the response data also contains `selected_games`, whose objects contain only `app_id` and `Tags`. The minimal `include_tags: true` response shape is `{ "total": 1, "games": [{ "app_id": 789, "similarity_score": 0.42, "Tags": "action,indie" }], "selected_games": [{ "app_id": 123, "Tags": "action" }, { "app_id": 456, "Tags": "indie" }] }`. Names are not returned.
 
 The Game Recommender owns this pipeline: exclude all selected rows; apply the first-selected-game positive-score filter; build separate union documents for selected `Tags` and selected `Keywords`; transform them with separate vectorizers and compare against their separate matrices; combine scores exactly as `sqrt(TagCosine * KeywordCosine)`; rank by stable descending score; and return up to `top_k` positive-score candidates. If raw tag/keyword metadata is unavailable, `recommend_mix` raises `Raw tag and keyword metadata is unavailable.`
 

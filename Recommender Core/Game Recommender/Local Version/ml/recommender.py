@@ -150,7 +150,7 @@ class GameRecommender:
         ranked = ranked[:min(top_k, len(ranked))]
         games = []
         for row_index, score in ranked:
-            game = {"app_id": int(self.app_ids[row_index]), "similarity_score": score, "mix_score": score}
+            game = {"app_id": int(self.app_ids[row_index]), "similarity_score": score}
             if include_tags:
                 game["Tags"] = self.raw_tags[row_index]
             games.append(game)
